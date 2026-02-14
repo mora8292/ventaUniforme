@@ -1,0 +1,60 @@
+.contenido-escuelas {
+    padding: 100px 40px;
+    text-align: center;
+}
+
+.contenido-escuelas h1 {
+    margin-bottom: 10px;
+}
+
+.contenido-escuelas p {
+    margin-bottom: 40px;
+    color: #555;
+}
+.grid-escudos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+.escudo-card {
+    background-color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: black;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.escudo-card img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 15px;
+    transition: 0.3s ease;
+}
+
+.escudo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.escudo-card:hover img {
+    transform: scale(1.05);
+}
+
+@media (max-width: 900px) {
+    .grid-escudos {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+@media (max-width: 600px) {
+    .grid-escudos {
+        grid-template-columns: 1fr;
+    }
+}

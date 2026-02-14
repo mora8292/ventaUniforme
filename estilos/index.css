@@ -1,0 +1,91 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, white, white);
+    color: black;
+    overflow-x: hidden;
+}
+
+/* BOTÓN MENÚ */
+.menu-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    cursor: pointer;
+    z-index: 1001;
+    background-color: rgb(117, 169, 248);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* SIDEBAR */
+.sidebar {
+    position: fixed;
+    left: -250px;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #013190;
+    padding-top: 80px;
+    transition: 0.3s ease;
+}
+
+.sidebar h2 {
+    color: white;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.sidebar nav a {
+    display: block;
+    padding: 15px 25px;
+    text-decoration: none;
+    color: white;
+    transition: 0.2s;
+}
+
+.sidebar nav a:hover {
+    background-color: rgb(117, 169, 248);
+}
+
+/* Sidebar activa */
+.sidebar.activa {
+    left: 0;
+}
+
+/* CONTENIDO */
+.contenido {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.bienvenida {
+    max-width: 600px;
+}
+
+.bienvenida h1 {
+    font-size: 38px;
+    margin-bottom: 20px;
+}
+
+.bienvenida p {
+    font-size: 18px;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.sidebar {
+    z-index: 1000;
+}
+
+.menu-toggle {
+    z-index: 1001;
+}
