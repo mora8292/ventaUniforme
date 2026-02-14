@@ -35,14 +35,17 @@
     object-fit: contain;
     margin-bottom: 15px;
     transition: 0.3s ease;
+    /*filter: brightness(60%);*/
+    transition: 0.4s ease;
 }
 
 .escudo-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    /*box-shadow: 0 10px 20px rgba(0,0,0,0.15);*/
 }
 
 .escudo-card:hover img {
+     filter: brightness(100%);
     transform: scale(1.05);
 }
 
@@ -57,4 +60,34 @@
     .grid-escudos {
         grid-template-columns: 1fr;
     }
+}
+
+.cbtis:hover{
+    background-color: #7F0102;
+    color: white;
+    box-shadow: 0 10px 25px rgba(127, 1, 2, 1);
+}
+
+.cecyte:hover{
+    background-color: #7EAF46;
+    color: white;
+    box-shadow: 0 10px 25px rgba(237, 105, 7, 0.8);
+}
+
+.cobat:hover{
+    background-color: #AD0111;
+    color: white;
+    box-shadow: 0 10px 25px rgba(65, 3, 5, 0.8);
+}
+
+.secundaria:hover{
+    background-color: #038500;
+    color: white;
+    box-shadow: 0 10px 25px rgba(255, 255, 1, 0.8);
+}
+
+.secundariaTecnica:hover{
+    background-color: #650302;
+    color: white;
+    box-shadow: 0 10px 25px rgba(101, 3, 2, 0.8);
 }
