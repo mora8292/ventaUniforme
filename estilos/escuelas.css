@@ -80,7 +80,7 @@
     box-shadow: 0 10px 25px rgba(65, 3, 5, 0.8);
 }
 
-.secundaria:hover{
+.secundariaMatamoros:hover{
     background-color: #038500;
     color: white;
     box-shadow: 0 10px 25px rgba(255, 255, 1, 0.8);
@@ -91,3 +91,5 @@
     color: white;
     box-shadow: 0 10px 25px rgba(101, 3, 2, 0.8);
 }
+
+
