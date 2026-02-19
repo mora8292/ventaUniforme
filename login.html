@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="estilos/login.css">
+</head>
+<body>
+    <div class="contenedor-login">
+        <div class="login-card">
+
+            <div class="encabezado-login">
+                <h1>Iniciar Sesión</h1>
+                <p>Ingresa tus credenciales para continuar</p>
+            </div>
+
+            <form>
+                <div class="input">
+                    <label>Usuario</label>
+                    <div class="input-wrapper">
+                        <img src="./icons/usuario.png" class="input-icon" alt="Usuario">
+                        <input type="text" placeholder="Ingrese su usuario" required>
+                    </div>
+                </div>
+
+                <div class="input">
+                    <label>Contraseña</label>
+                    <div class="input-wrapper">
+                        <img src="./icons/contrasena.png" class="input-icon" alt="Contraseña">
+                        <input type="password" id="password" placeholder="Ingrese su contraseña" required>
+                        <img src="./icons/visualizar.png" class="toggle-password" id="togglePassword" alt="Mostrar contraseña">
+                    </div>
+                </div>
+                <button type="submit" class="btn-login">Ingresar</button>
+            </form>
+        </div>
+    </div>
+    <script src="scripts/login.js"></script>
+</body>
+</html>

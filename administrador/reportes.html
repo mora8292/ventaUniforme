@@ -5,49 +5,55 @@
     <link rel="stylesheet" href="../estilos/index.css">
     <link rel="stylesheet" href="../estilos/administrador.css">
 </head>
+
 <body>
-
     <div class="layout">
-
         <div class="menu-toggle" id="menuToggle">
-                <img src="../icons/menu.png" alt="Menú">
-            </div>
-
-            <aside class="sidebar" id="sidebar">
-                <h2>Menú</h2>
-                <nav>
-                    <a href="">Inicio</a>
-                    <a href="">Inventario</a>
-                    <a href="">Escuelas</a>
-                    <a href="">Uniformes</a>
-                    <a href="">Reportes</a>
-                </nav>
-            </aside>
-
+            <img src="../icons/menu.png" alt="Menú">
+        </div>
+        
+        <aside class="sidebar" id="sidebar">
+            <h2>Menú</h2>
+            <nav>
+                <a href="">Inicio</a>
+                <a href="">Inventario</a>
+                <a href="">Escuelas</a>
+                <a href="">Uniformes</a>
+                <a href="">Reportes</a>
+            </nav>
+        </aside>
+        
         <main class="main">
             <div class="topbar">
                 <h1 style="text-align: center;">Generar Reporte de Ventas</h1>
             </div>
-
+            
             <div class="card">
-                <label>Fecha Inicio</label><br>
-                <input type="date"><br>
-
-                <label>Fecha Fin</label><br>
-                <input type="date"><br>
-
-                <label>Escuela</label><br>
-                <select>
-                    <option>Todas</option>
-                    <option>CBTis 154</option>
-                    <option>Secundaria Matamoros</option>
-                </select><br>
-
-                <button class="btn-primary">Generar Reporte</button>
+                <div class="filtros">
+                    <div class="campo">
+                        <label>Fecha Inicio</label>
+                        <input type="date">
+                    </div>
+                    
+                    <div class="campo">
+                        <label>Fecha Fin</label>
+                        <input type="date">
+                    </div>
+                    <div class="campo">
+                        <label>Escuela</label>
+                        <select>
+                            <option>Todas</option>
+                            <option>CBTis 154</option>
+                            <option>Secundaria Matamoros</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="contenedor-boton">
+                    <button class="btn-primary">Generar Reporte</button>
+                </div>
             </div>
-
         </main>
-
     </div>
     <script src="../script.js"></script>
 </body>

@@ -81,3 +81,26 @@ input, select{
     margin-bottom:15px;
     width:250px;
 }
+
+.filtros{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.campo{
+    display: flex;
+    flex-direction: column;
+}
+
+.campo input,
+.campo select{
+    width: 200px;
+}
+
+.contenedor-boton{
+    margin-top: 25px;
+    text-align: center;
+}

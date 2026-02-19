@@ -16,3 +16,5 @@ tallas.forEach(boton => {
 
     });
 });
+
+
