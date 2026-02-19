@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Uniformes</title>
+    <link rel="stylesheet" href="../estilos/index.css">
+    <link rel="stylesheet" href="../estilos/administrador.css">
+</head>
+
+<body>
+    <div class="layout">
+
+        <div class="menu-toggle" id="menuToggle">
+            <img src="../icons/menu.png" alt="Menú">
+        </div>
+        <aside class="sidebar" id="sidebar">
+            <h2>Menú</h2>
+            <nav>
+                <a href="">Inicio</a>
+                <a href="">Inventario</a>
+                <a href="">Escuelas</a>
+                <a href="">Uniformes</a>
+                <a href="">Reportes</a>
+            </nav>
+        </aside>
+        
+        <main class="main">
+            <h1 style="text-align: center;">Gestión de Uniformes</h1>
+
+            <div class="card">
+                <button class="btn-primary">+ Agregar Uniforme</button>
+            </div>
+
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Escuela</th>
+                            <th>Precio</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Uniforme CBTis</td>
+                            <td>CBTis 154</td>
+                            <td>$850</td>
+                            <td>
+                                <button class="btn-editar">
+                                    <img src="../icons/editar24.png" alt="Editar">
+                                </button>
+                                <button class="btn-eliminar">
+                                    <img src="../icons/eliminar_1.png" alt="Eliminar">
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <script src="../script.js"></script>
+</body>
+</html>

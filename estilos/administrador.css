@@ -1,0 +1,83 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+}
+
+.layout{
+    display:flex;
+    min-height:100vh;
+}
+
+/* CONTENIDO */
+.main{
+    flex:1;
+    padding:40px;
+}
+
+.topbar{
+    margin-bottom:30px;
+}
+
+.card{
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.05);
+    margin-bottom:30px;
+}
+
+.card h2{
+    margin-bottom:20px;
+}
+
+/* BOTONES */
+.btn-primary{
+    background:#ff6b2c;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    border-radius:20px;
+    cursor:pointer;
+}
+
+.btn-editar{
+    background:#4bf942;
+    color:white;
+    border:none;
+    padding:6px 12px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.btn-eliminar{
+    background:#ff0f06;
+    color:white;
+    border:none;
+    padding:6px 12px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+/* TABLAS */
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:12px;
+    border-bottom:1px solid #ddd;
+    text-align:left;
+}
+
+input, select{
+    padding:8px;
+    margin-bottom:15px;
+    width:250px;
+}
