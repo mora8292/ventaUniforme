@@ -1,0 +1,140 @@
+body{
+    margin:0;
+    font-family:'Segoe UI', Arial, sans-serif;
+    background:linear-gradient(135deg, white, white);
+}
+
+/* CONTENEDOR GENERAL */
+
+.carrito-container{
+    max-width:900px;
+    margin:100px auto;
+    padding:20px;
+}
+
+.carrito-container h1{
+    text-align:center;
+    margin-bottom:40px;
+    color:#013190;
+}
+
+/* LISTA DE PRODUCTOS */
+
+.lista-productos{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+/* TARJETA PRODUCTO */
+
+.producto-carrito{
+    display:flex;
+    align-items:center;
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* IMAGEN DEL PRODUCTO */
+
+.producto-carrito > img{
+    width:80px;
+    height:80px;
+    object-fit:cover;
+    border-radius:8px;
+    margin-right:20px;
+}
+
+/* INFORMACIÓN */
+
+.info-producto{
+    flex:1;
+}
+
+.info-producto h3{
+    margin:0;
+    font-size:18px;
+}
+
+.info-producto p{
+    margin:4px 0;
+    color:#555;
+}
+
+.precio{
+    font-weight:bold;
+    color:#013190;
+}
+
+/* BOTÓN ELIMINAR */
+
+.btn-eliminar{
+    background:#ff0f06;
+    border:none;
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    cursor:pointer;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* ICONO DEL BOTÓN */
+
+.btn-eliminar img{
+    width:24px;
+    height:24px;
+}
+
+.btn-eliminar:hover{
+    background:#e60000;
+}
+
+/* RESUMEN */
+
+.resumen-carrito{
+    margin-top:40px;
+    text-align:right;
+}
+
+.resumen-carrito h2{
+    margin-bottom:20px;
+}
+
+/* BOTÓN FINALIZAR */
+
+.btn-finalizar{
+    background:#013190;
+    color:white;
+    border:none;
+    padding:12px 25px;
+    font-size:16px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.btn-finalizar:hover{
+    background:rgb(117,169,248);
+}
+
+/* RESPONSIVE */
+
+@media (max-width:700px){
+
+    .producto-carrito{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .producto-carrito > img{
+        margin-bottom:10px;
+    }
+
+    .resumen-carrito{
+        text-align:center;
+    }
+
+}
