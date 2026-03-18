@@ -8,21 +8,10 @@
 </head>
 
 <body>
-    <div class="barra-superior">
-
-        <div class="menu-toggle" id="menuToggle">
-            <img src="./icons/menu.png" alt="Menú">
-        </div>
-
-        <div class="barra-busqueda">
-            <input type="text" placeholder="Buscar escuela">
-            <button>
-                <img src="./icons/buscar.png" alt="Buscar">
-            </button>
-        </div>
-
+    <div class="menu-toggle" id="menuToggle">
+        <img src="./icons/menu.png" alt="Menú">
     </div>
-
+    
     <aside class="sidebar" id="sidebar">
         <h2>Menú</h2>
         <nav>
@@ -31,9 +20,30 @@
             <a href="#">Contacto</a>
         </nav>
     </aside>
- 
-    <main class="contenido-escuelas">
+    
+    <div class="contenedor-busqueda">
+        <div class="barra-busqueda">
+            <input type="text" placeholder="Buscar escuela">
+            <button>
+                <img src="./icons/buscar.png" alt="Buscar" style="margin-right: 0px;">
+            </button>
+        </div>
+       <div class="filtros">
+            <button class="filtro-btn activo" data-filtro="todas">Todas</button>
+            <button class="filtro-btn" data-filtro="preparatoria">Preparatoria</button>
+            <button class="filtro-btn" data-filtro="secundaria">Secundaria</button>
+        </div>
 
+    </div>
+
+    <div class="carrito-toggle">    
+        <a href="./carrito.html">
+            <img src="./icons/carrito.png" alt="Menú">
+        </a>
+    </div> 
+    
+    <main class="contenido-escuelas">
+        
         <h1>Escuelas</h1>
         <p>Seleccione una escuela para ver sus uniformes disponibles.</p>
         
@@ -69,5 +79,6 @@
     </main>
 
     <script src="script.js"></script>
+    <script src="scripts/barra_busqueda.js"></script>
 </body>
 </html>
