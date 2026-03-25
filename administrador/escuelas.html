@@ -25,9 +25,11 @@
 
         <main class="main">
             <h1 style="text-align: center;">Gestión de Escuelas</h1>
-
+            <br>
             <div class="card">
-                <button class="btn-primary">+ Agregar Escuela</button>
+                <a href="../edicion/agregarEscuela.html">
+                    <button class="btn-primary">+ Agregar Escuela</button>
+                </a>
             </div>
 
             <div class="card">
@@ -44,7 +46,7 @@
                             <td>CBTis 154</td>
                             <td>Preparatoria</td>
                             <td>
-                                <button class="btn-editar">
+                                <button class="btn-editar" onclick="window.location.href='../edicion/editarEscuela.html'">
                                     <img src="../icons/editar24.png" alt="Editar">
                                 </button>
                                 <button class="btn-eliminar">

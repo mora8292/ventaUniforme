@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Inventario</title>
     <link rel="stylesheet" href="../estilos/index.css">
     <link rel="stylesheet" href="../estilos/administrador.css">
 </head>
+
 <body>
     <div class="layout">
 
@@ -25,6 +27,12 @@
 
         <main class="main">
             <h1 style="text-align: center;">Inventario</h1>
+            <br>
+            <div class="card">
+                <a href="../edicion/agregarInventario.html">
+                    <button class="btn-primary"> + Agregar</button>
+                </a>
+            </div>
 
             <div class="card">
                 <table>
@@ -33,6 +41,7 @@
                             <th>Uniforme</th>
                             <th>Talla</th>
                             <th>Stock</th>
+                            <th>Acción</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,22 +49,42 @@
                             <td>Uniforme CBTis</td>
                             <td>CH</td>
                             <td>25</td>
+                            <td>
+                                <button class="btn-editar" onclick="window.location.href='../edicion/editarInventario.html'">
+                                    <img src="../icons/editar24.png" alt="Editar">
+                                </button>
+                            </td>
                         </tr>
                         <tr>
                             <td>Uniforme CBTis</td>
                             <td>M</td>
                             <td>25</td>
+                            <td>
+                                <button class="btn-editar">
+                                    <img src="../icons/editar24.png" alt="Editar">
+                                </button>
+                            </td>
                         </tr>
                         <tr>
                             <td>Uniforme CBTis</td>
                             <td>G</td>
                             <td>25</td>
+                            <td>
+                                <button class="btn-editar">
+                                    <img src="../icons/editar24.png" alt="Editar">
+                                </button>
+                            </td>
                         </tr>
                         <tr>
                             <td>Uniforme CBTis</td>
                             <td>XG</td>
                             <td>25</td>
-                        </tr>                
+                            <td>
+                                <button class="btn-editar">
+                                    <img src="../icons/editar24.png" alt="Editar">
+                                </button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -65,4 +94,5 @@
     </div>
     <script src="../script.js"></script>
 </body>
+
 </html>
