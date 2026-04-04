@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./estilos/administrador.css">
+    <title>Ticket</title>
+</head>
+
+<body>
+
+<div class="main">
+
+    <div class="form-card">
+        <h2>Generar Ticket</h2>
+
+        <div class="form-group">
+            <label>Fecha</label>
+            <input type="date" readonly>
+        </div>
+
+        <div class="card" style="margin-top:20px;">
+            <h3>Productos</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Producto</th>
+                        <th>Uniforme</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Se llena dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="form-group">
+            <label>Subtotal</label>
+            <input type="text" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Método de pago</label>
+            <select>
+                <option>Efectivo</option>
+                <option>Tarjeta</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Importe recibido</label>
+            <input type="number" placeholder="Ingrese importe recibido">
+        </div>
+
+        <div class="form-group">
+            <label>Cambio a devolver</label>
+            <input type="text" readonly>
+        </div>
+
+        <div class="form-buttons">
+            <button class="btn-guardar" onclick="window.location.href='./ticketFinalizado.html'">Guardar Ticket</button>
+            <button class="btn-cancelar">Cerrar</button>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
