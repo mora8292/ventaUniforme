@@ -1,33 +1,35 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Escuelas</title>
-    <link rel="stylesheet" href="../estilos/index.css">
-    <link rel="stylesheet" href="../estilos/administrador.css">
+    <link rel="stylesheet" href="../../assets/css/index.css">
+    <link rel="stylesheet" href="../../assets/css/administrador.css">
 </head>
+
 <body>
 
     <div class="layout">
         <div class="menu-toggle" id="menuToggle">
-                <img src="../icons/menu.png" alt="Menú">
-            </div>
+            <img src="../../assets/icons/menu.png" alt="Menú">
+        </div>
 
-            <aside class="sidebar" id="sidebar">
-                <h2>Menú</h2>
-                <nav>
-                    <a href="./index.html">Inicio</a>
-                    <a href="./inventario.html">Inventario</a>
-                    <a href="./escuelas.html">Escuelas</a>
-                    <a href="./uniformes.html">Uniformes</a>
-                    <a href="./reportes.html">Reportes</a>
-                </nav>
-            </aside>
+        <aside class="sidebar" id="sidebar">
+            <h2>Menú</h2>
+            <nav>
+                <a href="./index.html">Inicio</a>
+                <a href="./inventario.html">Inventario</a>
+                <a href="./escuelas.html">Escuelas</a>
+                <a href="./uniformes.html">Uniformes</a>
+                <a href="./reportes.html">Reportes</a>
+            </nav>
+        </aside>
 
         <main class="main">
             <h1 style="text-align: center;">Gestión de Escuelas</h1>
             <br>
             <div class="card">
-                <a href="../edicion/agregarEscuela.html">
+                <a href="./agregarEscuela.html">
                     <button class="btn-primary">+ Agregar Escuela</button>
                 </a>
             </div>
@@ -46,11 +48,12 @@
                             <td>CBTis 154</td>
                             <td>Preparatoria</td>
                             <td>
-                                <button class="btn-editar" onclick="window.location.href='../edicion/editarEscuela.html'">
-                                    <img src="../icons/editar24.png" alt="Editar">
+                                <button class="btn-editar"
+                                    onclick="window.location.href='./editarEscuela.html'">
+                                    <img src="../../assets/icons/editar24.png" alt="Editar">
                                 </button>
                                 <button class="btn-eliminar">
-                                    <img src="../icons/eliminar_1.png" alt="Eliminar">
+                                    <img src="../../assets/icons/eliminar_1.png" alt="Eliminar">
                                 </button>
                             </td>
                         </tr>
@@ -61,6 +64,7 @@
         </main>
 
     </div>
-    <script src="../script.js"></script>
+    <script src="../../assets/js/script.js"></script>
 </body>
+
 </html>
