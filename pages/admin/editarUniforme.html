@@ -13,20 +13,43 @@
         <div class="form-card">
             <h2>Editar Usuario</h2>
 
-            <input id="usuario">
-            <input id="password">
+            <div class="form-group">
+                <label>Usuario</label>
+                <input id="usuario">
+            </div>
 
-            <input id="nombre">
-            <input id="apellPat">
-            <input id="apellMat">
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input id="password">
+            </div>
 
-            <select id="rol">
-                <option value="1">Administrador</option>
-                <option value="2">Vendedor</option>
-            </select>
+            <div class="form-group">
+                <label>Nombre</label>
+                <input id="nombre">
+            </div>
 
-            <button id="btnGuardar">Guardar</button>
-            <button onclick="cancelar()">Cancelar</button>
+            <div class="form-group">
+                <label>Apellido Paterno</label>
+                <input id="apellPat">
+            </div>
+
+            <div class="form-group">
+                <label>Apellido Materno</label>
+                <input id="apellMat">
+            </div>
+
+            <div class="form-group">
+                <label>Rol</label>
+                <select id="rol">
+                    <option value="1">Administrador</option>
+                    <option value="2">Vendedor</option>
+                </select>
+            </div>
+
+            <div class="form-buttons">
+                <button id="btnGuardar" class="btn-guardar">Guardar</button>
+                <button onclick="cancelar()" class="btn-cancelar">Cancelar</button>
+            </div>
         </div>
     </div>
 

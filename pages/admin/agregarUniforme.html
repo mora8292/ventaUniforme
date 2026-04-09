@@ -13,20 +13,43 @@
         <div class="form-card">
             <h2>Agregar Usuario</h2>
 
-            <input id="usuario" placeholder="Usuario">
-            <input id="password" placeholder="Contraseña">
+            <div class="form-group">
+                <label>Usuario</label>
+                <input id="usuario" placeholder="Usuario">
+            </div>
 
-            <input id="nombre" placeholder="Nombre">
-            <input id="apellPat" placeholder="Apellido Paterno">
-            <input id="apellMat" placeholder="Apellido Materno">
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input id="password" placeholder="Contraseña">
+            </div>
 
-            <select id="rol">
-                <option value="1">Administrador</option>
-                <option value="2">Vendedor</option>
-            </select>
+            <div class="form-group">
+                <label>Nombre</label>
+                <input id="nombre" placeholder="Nombre">
+            </div>
 
-            <button id="btnGuardar">Guardar</button>
-            <button onclick="cancelar()">Cancelar</button>
+            <div class="form-group">
+                <label>Apellido Paterno</label>
+                <input id="apellPat" placeholder="Apellido Paterno">
+            </div>
+
+            <div class="form-group">
+                <label>Apellido Materno</label>
+                <input id="apellMat" placeholder="Apellido Materno">
+            </div>
+
+            <div class="form-group">
+                <label>Rol</label>
+                <select id="rol">
+                    <option value="1">Administrador</option>
+                    <option value="2">Vendedor</option>
+                </select>
+            </div>
+
+            <div class="form-buttons">
+                <button id="btnGuardar" class="btn-guardar">Guardar</button>
+                <button onclick="cancelar()" class="btn-cancelar">Cancelar</button>
+            </div>
         </div>
     </div>
 
