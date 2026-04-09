@@ -20,8 +20,9 @@
                 <a href="./index.html">Inicio</a>
                 <a href="./inventario.html">Inventario</a>
                 <a href="./escuelas.html">Escuelas</a>
-                <a href="./uniformes.html">Uniformes</a>
+                <a href="./uniformes.html">Usuarios</a>
                 <a href="./reportes.html">Reportes</a>
+                <a href="" onclick="logout()">Cerrar sesion</a>
             </nav>
         </aside>
 
@@ -43,21 +44,7 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>CBTis 154</td>
-                            <td>Preparatoria</td>
-                            <td>
-                                <button class="btn-editar"
-                                    onclick="window.location.href='./editarEscuela.html'">
-                                    <img src="../../assets/icons/editar24.png" alt="Editar">
-                                </button>
-                                <button class="btn-eliminar">
-                                    <img src="../../assets/icons/eliminar_1.png" alt="Eliminar">
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
+                    <tbody id="tablaEscuelas"></tbody>
                 </table>
             </div>
 
@@ -66,5 +53,75 @@
     </div>
     <script src="../../assets/js/script.js"></script>
 </body>
+<script>
+    const logged = localStorage.getItem("logged");
+    const rol = localStorage.getItem("rol");
+
+    // ❌ no ha iniciado sesión
+    if (!logged) {
+        window.location.href = "../../login.html";
+    }
+    function logout() {
+        localStorage.clear();
+        window.location.href = "../../login.html";
+    }
+</script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBj0V13o71naoJlqfDdah5Ob1I-cZskp8M",
+        authDomain: "uniformes-calpus.firebaseapp.com",
+        projectId: "uniformes-calpus",
+        storageBucket: "uniformes-calpus.firebasestorage.app",
+        messagingSenderId: "134191574166",
+        appId: "1:134191574166:web:130c593447ffc5bfca26b7",
+        measurementId: "G-7169TL6NG0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 🚀 cargar escuelas
+    async function cargarEscuelas() {
+        const tabla = document.getElementById("tablaEscuelas");
+        tabla.innerHTML = "";
+
+        const snapshot = await getDocs(collection(db, "escuelas"));
+
+        snapshot.forEach((docItem) => {
+            const data = docItem.data();
+
+            const fila = `
+            <tr>
+                <td>${data.nombre || "Sin nombre"}</td>
+                <td>${data.grado || "N/A"}</td>
+                <td>
+                    <button class="btn-editar" onclick="editar('${docItem.id}')"><img src="../../assets/icons/editar24.png" alt="Editar"></button>
+                    <button class="btn-eliminar" onclick="eliminar('${docItem.id}')"><img src="../../assets/icons/eliminar_1.png" alt="Eliminar"></button>
+                </td>
+            </tr>
+        `;
+
+            tabla.innerHTML += fila;
+        });
+    }
+
+    // ✏️ editar
+    window.editar = function (id) {
+        window.location.href = `./editarEscuela.html?id=${id}`;
+    }
+
+    // 🗑️ eliminar
+    window.eliminar = async function (id) {
+        if (!confirm("¿Eliminar escuela?")) return;
+
+        await deleteDoc(doc(db, "escuelas", id));
+        cargarEscuelas();
+    }
+
+    cargarEscuelas();
+</script>
 
 </html>

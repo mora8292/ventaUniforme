@@ -1,45 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Usuario</title>
     <link rel="stylesheet" href="../../assets/css/administrador.css">
-    <title>Editar Uniforme</title>
 </head>
 
 <body>
+
     <div class="main">
-
         <div class="form-card">
-            <h2>Editar Uniforme</h2>
+            <h2>Editar Usuario</h2>
 
-            <div class="form-group">
-                <label>Nombre del uniforme</label>
-                <input type="text" placeholder="Ingrese nombre del uniforme">
-            </div>
+            <input id="usuario">
+            <input id="password">
 
-            <div class="form-group">
-                <label>Escuela</label>
-                <select>
-                    <option>Seleccione una escuela</option>
-                    <option>CBTis 154</option>
-                </select>
-            </div>
+            <input id="nombre">
+            <input id="apellPat">
+            <input id="apellMat">
 
-            <div class="form-group">
-                <label>Precio</label>
-                <input type="number" placeholder="Ingrese precio">
-            </div>
+            <select id="rol">
+                <option value="1">Administrador</option>
+                <option value="2">Vendedor</option>
+            </select>
 
-            <div class="form-buttons">
-                <button class="btn-guardar">Guardar</button>
-                <button class="btn-cancelar">Cancelar</button>
-            </div>
-
+            <button id="btnGuardar">Guardar</button>
+            <button onclick="cancelar()">Cancelar</button>
         </div>
-
     </div>
+
+    <script>
+        if (!localStorage.getItem("logged")) {
+            window.location.href = "../../login.html";
+        }
+        function cancelar() {
+            window.location.href = "./uniformes.html";
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {
+            getFirestore,
+            doc,
+            getDoc,
+            updateDoc
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj0V13o71naoJlqfDdah5Ob1I-cZskp8M",
+            authDomain: "uniformes-calpus.firebaseapp.com",
+            projectId: "uniformes-calpus",
+            storageBucket: "uniformes-calpus.firebasestorage.app",
+            messagingSenderId: "134191574166",
+            appId: "1:134191574166:web:130c593447ffc5bfca26b7",
+            measurementId: "G-7169TL6NG0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+
+        async function cargar() {
+            const snap = await getDoc(doc(db, "usuarios", id));
+            const data = snap.data();
+
+            document.getElementById("usuario").value = data.usuario;
+            document.getElementById("password").value = data.contraseña;
+            document.getElementById("nombre").value = data.nombre;
+            document.getElementById("apellPat").value = data.apellPat;
+            document.getElementById("apellMat").value = data.apellMat;
+            document.getElementById("rol").value = data.rolInfo?.idRol || "2";
+        }
+
+        document.getElementById("btnGuardar").addEventListener("click", async () => {
+
+            const usuario = document.getElementById("usuario").value;
+            const password = document.getElementById("password").value;
+            const nombre = document.getElementById("nombre").value;
+            const apellPat = document.getElementById("apellPat").value;
+            const apellMat = document.getElementById("apellMat").value;
+            const rol = document.getElementById("rol").value;
+
+            await updateDoc(doc(db, "usuarios", id), {
+                usuario,
+                contraseña: password,
+                nombre,
+                apellPat,
+                apellMat,
+                rolInfo: {
+                    idRol: rol,
+                    fechaAsignacion: new Date()
+                }
+            });
+
+            alert("Usuario actualizado");
+            window.location.href = "./uniformes.html";
+        });
+
+        cargar();
+    </script>
 
 </body>
 

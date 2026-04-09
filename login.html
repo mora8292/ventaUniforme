@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" href="./assets/css/login.css">
+    <link rel="stylesheet" href="assets/css/login.css">
 </head>
+
 <body>
     <div class="contenedor-login">
         <div class="login-card">
@@ -19,22 +21,122 @@
                     <label>Usuario</label>
                     <div class="input-wrapper">
                         <img src="./assets/icons/usuario.png" class="input-icon" alt="Usuario">
-                        <input type="text" placeholder="Ingrese su usuario" required>
+                        <input id="user" type="text" placeholder="Ingrese su usuario" required>
                     </div>
                 </div>
 
                 <div class="input">
                     <label>Contraseña</label>
                     <div class="input-wrapper">
-                        <img src="./assets/icons/contrasena.png" class="input-icon" alt="Contraseña">
+                        <img src="assets/icons/contrasena.png" class="input-icon" alt="Contraseña">
                         <input type="password" id="password" placeholder="Ingrese su contraseña" required>
-                        <img src="./assets/icons/visualizar.png" class="toggle-password" id="togglePassword" alt="Mostrar contraseña">
+                        <img src="assets/icons/visualizar.png" class="toggle-password" id="togglePassword"
+                            alt="Mostrar contraseña">
                     </div>
                 </div>
-                <button type="submit" class="btn-login">Ingresar</button>
+                <button id="btnLogin" type="submit" class="btn-login">Ingresar</button>
             </form>
         </div>
     </div>
     <script src="./assets/js/login.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+        import {
+            getAuth,
+            signInWithEmailAndPassword
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        import {
+            getFirestore,
+            collection,
+            query,
+            where,
+            getDocs,
+            doc,
+            getDoc
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // 🔥 CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj0V13o71naoJlqfDdah5Ob1I-cZskp8M",
+            authDomain: "uniformes-calpus.firebaseapp.com",
+            projectId: "uniformes-calpus",
+            storageBucket: "uniformes-calpus.firebasestorage.app",
+            messagingSenderId: "134191574166",
+            appId: "1:134191574166:web:130c593447ffc5bfca26b7",
+            measurementId: "G-7169TL6NG0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // 🚀 LOGIN CON USUARIO
+        async function login(username, password) {
+            try {
+
+                // 🔎 Buscar usuario por username
+                const q = query(
+                    collection(db, "usuarios"),
+                    where("usuario", "==", username)
+                );
+
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    alert("Usuario no encontrado");
+                    return;
+                }
+
+                const userDoc = querySnapshot.docs[0];
+                const userData = userDoc.data();
+
+                // 🚨 VALIDACIÓN MANUAL (NO recomendado, pero funcional)
+                if (userData.contraseña !== password) {
+                    alert("Contraseña incorrecta");
+                    return;
+                }
+
+                // 🎯 Obtener rol (anidado)
+                const rol = userData.rolInfo?.idRol;
+
+                // 🚀 Redirección
+                if (rol === "1") {
+                    localStorage.setItem("user", username);
+                    localStorage.setItem("rol", rol);
+                    localStorage.setItem("logged", "true");
+
+                    window.location.href = "/pages/admin/index.html";
+                } else if (rol === "2") {
+                    localStorage.setItem("user", username);
+                    localStorage.setItem("rol", rol);
+                    localStorage.setItem("logged", "true");
+                    
+                    window.location.href = "/pages/seller/index.html";
+                } else {
+                    alert("Rol no definido");
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert("Error en login");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            document.getElementById("btnLogin").addEventListener("click", (e) => {
+                e.preventDefault();
+
+                const username = document.getElementById("user").value.trim();
+                const password = document.getElementById("password").value;
+
+                login(username, password);
+            });
+
+        });
+    </script>
 </body>
+
 </html>

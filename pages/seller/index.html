@@ -38,6 +38,19 @@
     </main>
 
     <script src="../../assets/js/script.js"></script>
+        <script>
+        const logged = localStorage.getItem("logged");
+        const rol = localStorage.getItem("rol");
+
+        // ❌ no ha iniciado sesión
+        if (!logged) {
+            window.location.href = "../../login.html";
+        }
+        function logout() {
+            localStorage.clear();
+            window.location.href = "../../login.html";
+        }
+    </script>
 </body>
 </html>
 

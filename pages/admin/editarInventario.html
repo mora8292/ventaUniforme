@@ -1,37 +1,116 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../assets/css/administrador.css">
     <title>Editar Inventario</title>
+    <link rel="stylesheet" href="../../assets/css/administrador.css">
 </head>
 
 <body>
-    <div class="main">
 
+    <div class="main">
         <div class="form-card">
             <h2>Editar Inventario</h2>
 
             <div class="form-group">
                 <label>Uniforme</label>
-                <input type="text" placeholder="Nombre del Uniforme">
+                <input type="text" id="nombre">
+            </div>
+
+            <div class="form-group">
+                <label>Talla</label>
+                <select id="talla">
+                    <option value="CH">CH</option>
+                    <option value="M">M</option>
+                    <option value="G">G</option>
+                    <option value="XG">XG</option>
+                </select>
             </div>
 
             <div class="form-group">
                 <label>Stock</label>
-                <input type="number" placeholder="Cantidad disponible">
+                <input type="number" id="stock">
+            </div>
+
+            <div class="form-group">
+                <label>Precio Unitario</label>
+                <input type="number" id="precio">
             </div>
 
             <div class="form-buttons">
-                <button class="btn-guardar">Guardar</button>
-                <button class="btn-cancelar">Cancelar</button>
+                <button class="btn-guardar" id="btnGuardar">Guardar</button>
+                <button class="btn-cancelar" onclick="cancelar()">Cancelar</button>
             </div>
-
         </div>
-
     </div>
+
+    <script>
+        const logged = localStorage.getItem("logged");
+        const rol = localStorage.getItem("rol");
+
+        if (!logged || rol !== "1") {
+            window.location.href = "../../login.html";
+        }
+
+        function cancelar() {
+            window.location.href = "./inventario.html";
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_AUTH_DOMAIN",
+            projectId: "uniformes-calpus",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+
+        // 🔎 cargar datos
+        async function cargar() {
+            const docSnap = await getDoc(doc(db, "productos", id));
+            const data = docSnap.data();
+
+            document.getElementById("nombre").value = data.nombre;
+            document.getElementById("stock").value = data.stock;
+            document.getElementById("talla").value = data.talla || "CH";
+            document.getElementById("precio").value = data.precioUnitario ?? 0; // ✅ CORRECTO
+        }
+
+        // 💾 guardar cambios
+        document.getElementById("btnGuardar").addEventListener("click", async () => {
+
+            const nombre = document.getElementById("nombre").value.trim();
+            const stock = parseInt(document.getElementById("stock").value);
+            const talla = document.getElementById("talla").value;
+            const precioUnitario = parseFloat(document.getElementById("precio").value); // ✅ CREAR VARIABLE
+
+            if (!nombre || isNaN(stock) || isNaN(precioUnitario)) {
+                alert("Completa los campos correctamente");
+                return;
+            }
+
+            await updateDoc(doc(db, "productos", id), {
+                nombre,
+                stock,
+                talla,
+                precioUnitario // ✅ YA EXISTE
+            });
+
+            alert("Actualizado");
+            window.location.href = "./inventario.html";
+        });
+
+        cargar();
+    </script>
 
 </body>
 

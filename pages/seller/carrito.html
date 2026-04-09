@@ -1,88 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../assets/css/index.css">
-    <link rel="stylesheet" href="../../assets/css/carrito.css">
-    
     <title>Carrito</title>
-
+    <link rel="stylesheet" href="../../assets/css/index.css">
 </head>
+
 <body>
-    <div class="menu-toggle" id="menuToggle">
-        <img src="../../assets/icons/menu.png" alt="Menú">
-    </div>
 
-    <aside class="sidebar" id="sidebar">
-        <h2>Menú</h2>
-        <nav>
-            <a href="./index.html">Inicio</a>
-            <a href="./escuelas.html">Escuelas</a>
-            <a href="#">Contacto</a>
-        </nav>
-    </aside>
+    <h1>Carrito</h1>
 
-    <div class="carrito-toggle">    
-        <a href="./carrito.html">
-            <img src="../../assets/icons/carrito.png" alt="Menú">
-        </a>
-    </div>
-    
+    <div id="listaProductos"></div>
 
-<div class="carrito-container">
+    <h2 id="total"></h2>
 
-    <h1>Carrito de Venta</h1>
+    <button onclick="irATicket()">Finalizar Venta</button>
 
-    <div class="lista-productos">
+    <script>
 
-        <div class="producto-carrito">
+        let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
-            <img src="../../assets/img/uniforme1.jpg">
+        function render() {
 
-            <div class="info-producto">
-                <h3>Uniforme CBTis No.154</h3>
-                <p>Talla: M</p>
-                <p class="precio">$850</p>
+            const lista = document.getElementById("listaProductos");
+            const totalHTML = document.getElementById("total");
+
+            lista.innerHTML = "";
+
+            let total = 0;
+
+            carrito.forEach((p, i) => {
+
+                total += p.precioUnitario * p.cantidad;
+
+                lista.innerHTML += `
+            <div>
+                <img src="${p.imgUrl}" width="80">
+                <h3>${p.nombre}</h3>
+                <p>Talla: ${p.talla}</p>
+                <p>Cantidad: ${p.cantidad}</p>
+                <p>$${p.precioUnitario}</p>
+                <button onclick="eliminar(${i})">Eliminar</button>
             </div>
+        `;
+            });
 
-            <button class="btn-eliminar">
-                <img src="../../assets/icons/eliminar_1.png    ">
-            </button>
+            totalHTML.textContent = "Total: $" + total;
+        }
 
-        </div>
+        function eliminar(i) {
+            carrito.splice(i, 1);
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+            render();
+        }
 
+        // 🚀 IR AL TICKET
+        function irATicket() {
 
-        <div class="producto-carrito">
+            if (carrito.length === 0) {
+                return alert("Carrito vacío");
+            }
 
-            <img src="../../assets/img/uniforme1.jpg">
+            localStorage.setItem("ticket", JSON.stringify(carrito));
 
-            <div class="info-producto">
-                <h3>Uniforme CBTis No.154</h3>
-                <p>Talla: G</p>
-                <p class="precio">$850</p>
-            </div>
+            window.location.href = "./ticket.html";
+        }
 
-            <button class="btn-eliminar">
-                <img src="../../assets/icons/eliminar_1.png    ">
-            </button>
+        render();
 
-        </div>
+    </script>
 
-    </div>
-
-
-    <div class="resumen-carrito">
-
-        <h2>Total: $1700</h2>
-
-        <button class="btn-finalizar">
-            Finalizar Venta
-        </button>
-
-    </div>
-
-</div>
-    <script src="../../assets/js/script.js"></script>    
 </body>
+
 </html>

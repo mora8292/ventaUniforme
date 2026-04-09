@@ -1,0 +1,31 @@
+{
+  "name": "ventauniforme",
+  "version": "1.0.0",
+  "description": "Pagina web donde se venden uniformes, servira para el cliente ya que el administrara todo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mora8292/ventaUniforme.git"
+  },
+  "keywords": [],
+  "author": "Alexis, Cesar & Uriel",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/mora8292/ventaUniforme/issues"
+  },
+  "homepage": "https://github.com/mora8292/ventaUniforme#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "firebase": "^12.11.0",
+    "firebase-admin": "^13.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

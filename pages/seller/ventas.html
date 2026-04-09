@@ -1,20 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Venta</title>
     <link rel="stylesheet" href="../../assets/css/index.css">
     <link rel="stylesheet" href="../../assets/css/ventas.css">
 </head>
 
 <body>
-    
-    <div class="carrito-toggle">    
-        <a href="./carrito.html">
-            <img src="../../assets/icons/carrito.png" alt="Menú">
-        </a>
-    </div>
 
     <div class="menu-toggle" id="menuToggle">
         <img src="../../assets/icons/menu.png" alt="Menú">
@@ -25,45 +19,178 @@
         <nav>
             <a href="./index.html">Inicio</a>
             <a href="./escuelas.html">Escuelas</a>
-            <a href="#">Contacto</a>
         </nav>
     </aside>
+
+    <div class="carrito-toggle">
+        <a href="./carrito.html">🛒</a>
+    </div>
+
     <div class="producto-container">
 
-        <div class="producto-imagen">
-            <img src="../../assets/img/uniforme1.jpg" alt="Uniforme CBTis">
+        <div>
+            <img id="imgProducto" width="250">
         </div>
 
-        <div class="producto-info">
+        <div>
 
-            <h1>Uniforme CBTis No. 154</h1>
+            <h1 id="nombreProducto"></h1>
+            <p id="precioProducto"></p>
 
-            <p class="precio">$850 MXN</p>
+            <h3>Tallas</h3>
+            <div id="tallasContainer"></div>
 
-            <p class="descripcion">
-                Uniforme oficial escolar. Tela resistente, cómoda y fresca.
-                Incluye camisa y pantalón.
-            </p>
+            <h3>Cantidad</h3>
+            <input type="number" id="cantidad" value="1" min="1">
 
-            <div class="tallas">
-                <h3>Selecciona la talla:</h3>
+            <br><br>
 
-                <div class="opciones-talla">
-                    <button class="talla">CH</button>
-                    <button class="talla">M</button>
-                    <button class="talla">G</button>
-                    <button class="talla">XG</button>
-                </div>
-            </div>
-            <div>
-            <button class="btn-comprar">Vender</button>
-            <button class="btn-comprar">+ Agregar al carrito</button>
-            </div>
-            
+            <button id="btnVender">Vender</button>
+            <button id="btnCarrito">Agregar al carrito</button>
+
         </div>
+
     </div>
-    
-    <script src="../../assets/js/script.js"></script>
+
+    <script type="module">
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            getDocs
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj0V13o71naoJlqfDdah5Ob1I-cZskp8M",
+            authDomain: "uniformes-calpus.firebaseapp.com",
+            projectId: "uniformes-calpus",
+            storageBucket: "uniformes-calpus.firebasestorage.app",
+            messagingSenderId: "134191574166",
+            appId: "1:134191574166:web:130c593447ffc5bfca26b7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const params = new URLSearchParams(window.location.search);
+        const idProducto = params.get("idProducto");
+
+        let productoBase;
+        let tallas = [];
+        let seleccion = null;
+
+        // 🔥 cargar producto
+        async function cargar() {
+
+            const snap = await getDocs(collection(db, "productos"));
+
+            snap.forEach(d => {
+                if (d.id === idProducto) {
+                    productoBase = { id: d.id, ...d.data() };
+                }
+            });
+
+            snap.forEach(d => {
+                const data = d.data();
+
+                if (data.nombre === productoBase.nombre) {
+                    tallas.push({
+                        id: d.id,
+                        talla: data.talla,
+                        stock: data.stock,
+                        precio: data.precioUnitario
+                    });
+                }
+            });
+
+            pintar();
+        }
+
+        // 🎨 pintar
+        function pintar() {
+
+            document.getElementById("nombreProducto").textContent = productoBase.nombre;
+            document.getElementById("precioProducto").textContent = "$" + productoBase.precioUnitario;
+            document.getElementById("imgProducto").src = productoBase.imgUrl;
+
+            const cont = document.getElementById("tallasContainer");
+
+            tallas.forEach(t => {
+
+                const btn = document.createElement("button");
+                btn.textContent = t.talla;
+
+                if (t.stock <= 0) btn.disabled = true;
+
+                btn.onclick = () => {
+                    seleccion = t;
+                    document.getElementById("cantidad").max = t.stock;
+                };
+
+                cont.appendChild(btn);
+            });
+        }
+
+        // 🛒 carrito
+        document.getElementById("btnCarrito").addEventListener("click", () => {
+
+            if (!seleccion) return alert("Selecciona talla");
+
+            const cantidad = parseInt(document.getElementById("cantidad").value);
+
+            if (cantidad <= 0 || cantidad > seleccion.stock) {
+                return alert("Cantidad inválida");
+            }
+
+            let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+
+            carrito.push({
+                idProducto: seleccion.id,
+                nombre: productoBase.nombre,
+                talla: seleccion.talla,
+                precioUnitario: seleccion.precio,
+                cantidad,
+                imgUrl: productoBase.imgUrl
+            });
+
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+
+            alert("Agregado al carrito");
+        });
+
+        // 💰 venta directa → IR A TICKET
+        document.getElementById("btnVender").addEventListener("click", () => {
+
+            if (!seleccion) return alert("Selecciona talla");
+
+            const cantidad = parseInt(document.getElementById("cantidad").value);
+
+            if (cantidad <= 0 || cantidad > seleccion.stock) {
+                return alert(`Stock insuficiente. Disponible: ${seleccion.stock}`);
+            }
+
+            // 🔥 crear carrito temporal SOLO para ticket
+            const carritoTemp = [{
+                idProducto: seleccion.id,
+                nombre: productoBase.nombre,
+                talla: seleccion.talla,
+                precioUnitario: seleccion.precio,
+                cantidad,
+                imgUrl: productoBase.imgUrl
+            }];
+
+            // guardar como carrito normal
+            localStorage.setItem("carrito", JSON.stringify(carritoTemp));
+
+            // 👉 ir a ticket
+            window.location.href = "./ticket.html";
+        });
+
+        cargar();
+
+    </script>
 
 </body>
+
 </html>

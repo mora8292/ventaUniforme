@@ -1,40 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Escuela</title>
-<link rel="stylesheet" href="../../assets/css/administrador.css">
+    <link rel="stylesheet" href="../../assets/css/administrador.css">
 </head>
 
 <body>
+
     <div class="main">
         <div class="form-card">
             <h2>Editar Escuela</h2>
 
             <div class="form-group">
                 <label>Nombre</label>
-                <input type="text">
+                <input type="text" id="nombre">
             </div>
 
             <div class="form-group">
                 <label>Nivel</label>
-                <select>
-                    <option>Primaria</option>
-                    <option>Secundaria</option>
-                    <option>Preparatoria</option>
+                <select id="grado">
+                    <option value="Primaria">Primaria</option>
+                    <option value="Secundaria">Secundaria</option>
+                    <option value="Preparatoria">Preparatoria</option>
                 </select>
             </div>
 
             <div class="form-buttons">
-                <button class="btn-guardar">Guardar</button>
-                <button class="btn-cancelar">Cancelar</button>
+                <button class="btn-guardar" id="btnGuardar">Guardar</button>
+                <button class="btn-cancelar" onclick="cancelar()">Cancelar</button>
             </div>
 
         </div>
-
     </div>
+
+    <!-- 🔒 PROTECCIÓN -->
+    <script>
+        const logged = localStorage.getItem("logged");
+        const rol = localStorage.getItem("rol");
+
+        if (!logged || rol !== "1") {
+            window.location.href = "../../login.html";
+        }
+
+        function cancelar() {
+            window.location.href = "./escuelas.html";
+        }
+    </script>
+
+    <!-- 🔥 FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj0V13o71naoJlqfDdah5Ob1I-cZskp8M",
+            authDomain: "uniformes-calpus.firebaseapp.com",
+            projectId: "uniformes-calpus",
+            storageBucket: "uniformes-calpus.firebasestorage.app",
+            messagingSenderId: "134191574166",
+            appId: "1:134191574166:web:130c593447ffc5bfca26b7",
+            measurementId: "G-7169TL6NG0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 🔎 obtener ID
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+
+        if (!id) {
+            alert("ID no válido");
+            window.location.href = "./escuelas.html";
+        }
+
+        // 🚀 cargar datos
+        async function cargarEscuela() {
+            try {
+                const snap = await getDoc(doc(db, "escuelas", id));
+
+                if (!snap.exists()) {
+                    alert("Escuela no encontrada");
+                    return;
+                }
+
+                const data = snap.data();
+
+                document.getElementById("nombre").value = data.nombre || "";
+                document.getElementById("grado").value = data.grado || "Primaria";
+
+            } catch (error) {
+                console.error(error);
+                alert("Error al cargar");
+            }
+        }
+
+        // 💾 guardar cambios
+        document.getElementById("btnGuardar").addEventListener("click", async () => {
+            const nombre = document.getElementById("nombre").value.trim();
+            const grado = document.getElementById("grado").value;
+
+            if (!nombre) {
+                alert("Completa los campos");
+                return;
+            }
+
+            try {
+                await updateDoc(doc(db, "escuelas", id), {
+                    nombre,
+                    grado
+                });
+
+                alert("Actualizado");
+                window.location.href = "./escuelas.html";
+
+            } catch (error) {
+                console.error(error);
+                alert("Error al actualizar");
+            }
+        });
+
+        // 🔥 iniciar
+        cargarEscuela();
+    </script>
+
 </body>
 
 </html>

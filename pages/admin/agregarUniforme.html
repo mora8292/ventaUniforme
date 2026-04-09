@@ -1,45 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Usuario</title>
     <link rel="stylesheet" href="../../assets/css/administrador.css">
-    <title>Agregar Uniforme</title>
 </head>
 
 <body>
+
     <div class="main">
-
         <div class="form-card">
-            <h2>Agregar Uniforme</h2>
+            <h2>Agregar Usuario</h2>
 
-            <div class="form-group">
-                <label>Nombre del uniforme</label>
-                <input type="text" placeholder="Ingrese nombre del uniforme">
-            </div>
+            <input id="usuario" placeholder="Usuario">
+            <input id="password" placeholder="Contraseña">
 
-            <div class="form-group">
-                <label>Escuela</label>
-                <select>
-                    <option>Seleccione una escuela</option>
-                    <option>CBTis 154</option>
-                </select>
-            </div>
+            <input id="nombre" placeholder="Nombre">
+            <input id="apellPat" placeholder="Apellido Paterno">
+            <input id="apellMat" placeholder="Apellido Materno">
 
-            <div class="form-group">
-                <label>Precio</label>
-                <input type="number" placeholder="Ingrese precio">
-            </div>
+            <select id="rol">
+                <option value="1">Administrador</option>
+                <option value="2">Vendedor</option>
+            </select>
 
-            <div class="form-buttons">
-                <button class="btn-guardar">Guardar</button>
-                <button class="btn-cancelar">Cancelar</button>
-            </div>
-
+            <button id="btnGuardar">Guardar</button>
+            <button onclick="cancelar()">Cancelar</button>
         </div>
-
     </div>
+
+    <script>
+        if (!localStorage.getItem("logged")) {
+            window.location.href = "../../login.html";
+        }
+        function cancelar() {
+            window.location.href = "./uniformes.html";
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            addDoc
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj0V13o71naoJlqfDdah5Ob1I-cZskp8M",
+            authDomain: "uniformes-calpus.firebaseapp.com",
+            projectId: "uniformes-calpus",
+            storageBucket: "uniformes-calpus.firebasestorage.app",
+            messagingSenderId: "134191574166",
+            appId: "1:134191574166:web:130c593447ffc5bfca26b7",
+            measurementId: "G-7169TL6NG0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.getElementById("btnGuardar").addEventListener("click", async () => {
+
+            const usuario = document.getElementById("usuario").value.trim();
+            const password = document.getElementById("password").value;
+            const nombre = document.getElementById("nombre").value;
+            const apellPat = document.getElementById("apellPat").value;
+            const apellMat = document.getElementById("apellMat").value;
+            const rol = document.getElementById("rol").value;
+
+            if (!usuario || !password) {
+                alert("Completa los campos");
+                return;
+            }
+
+            await addDoc(collection(db, "usuarios"), {
+                usuario,
+                contraseña: password,
+                nombre,
+                apellPat,
+                apellMat,
+                rolInfo: {
+                    idRol: rol,
+                    fechaAsignacion: new Date()
+                }
+            });
+
+            alert("Usuario creado");
+            window.location.href = "./uniformes.html";
+        });
+    </script>
 
 </body>
 

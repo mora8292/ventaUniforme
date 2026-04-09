@@ -20,8 +20,9 @@
             <a href="./index.html">Inicio</a>
             <a href="./inventario.html">Inventario</a>
             <a href="./escuelas.html">Escuelas</a>
-            <a href="./uniformes.html">Uniformes</a>
+            <a href="./uniformes.html">Usuarios</a>
             <a href="./reportes.html">Reportes</a>
+            <a href="" onclick="logout()">Cerrar sesion</a>
         </nav>
     </aside>
 
@@ -37,6 +38,19 @@
     </main>
 
     <script src="../../assets/js/script.js"></script>
+    <script>
+        const logged = localStorage.getItem("logged");
+        const rol = localStorage.getItem("rol");
+
+        // ❌ no ha iniciado sesión
+        if (!logged) {
+            window.location.href = "../../login.html";
+        }
+        function logout() {
+            localStorage.clear();
+            window.location.href = "../../login.html";
+        }
+    </script>
 </body>
 
 </html>

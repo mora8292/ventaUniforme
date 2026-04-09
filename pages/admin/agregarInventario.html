@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../assets/css/administrador.css">
     <title>Agregar Inventario</title>
+    <link rel="stylesheet" href="../../assets/css/administrador.css">
 </head>
 
 <body>
+
     <div class="main">
 
         <div class="form-card">
@@ -16,32 +16,175 @@
 
             <div class="form-group">
                 <label>Uniforme</label>
-                <input type="text" placeholder="Nombre del Uniforme">
+                <input type="text" id="nombre">
             </div>
 
             <div class="form-group">
                 <label>Talla</label>
-                <select>
-                    <option>CH</option>
-                    <option>M</option>
-                    <option>G</option>
-                    <option>XG</option>
+                <select id="talla">
+                    <option value="CH">CH</option>
+                    <option value="M">M</option>
+                    <option value="G">G</option>
+                    <option value="XG">XG</option>
                 </select>
             </div>
 
             <div class="form-group">
+                <label>Escuela</label>
+                <select id="escuela"></select>
+            </div>
+
+            <div class="form-group">
+                <label>Categoría</label>
+                <select id="categoria"></select>
+            </div>
+
+            <div class="form-group">
+                <label>Imagen</label>
+                <input type="file" id="imagen">
+            </div>
+
+            <div class="form-group">
                 <label>Stock</label>
-                <input type="number" placeholder="Cantidad disponible">
+                <input type="number" id="stock">
+            </div>
+
+            <div class="form-group">
+                <label>Precio Unitario</label>
+                <input type="number" id="precio" placeholder="Ej: 250">
             </div>
 
             <div class="form-buttons">
-                <button class="btn-guardar">Guardar</button>
-                <button class="btn-cancelar">Cancelar</button>
+                <button class="btn-guardar" id="btnGuardar">Guardar</button>
+                <button class="btn-cancelar" onclick="cancelar()">Cancelar</button>
             </div>
 
         </div>
 
     </div>
+
+    <!-- 🔒 PROTECCIÓN -->
+    <script>
+        const logged = localStorage.getItem("logged");
+        const rol = localStorage.getItem("rol");
+
+        if (!logged || rol !== "1") {
+            window.location.href = "../../login.html";
+        }
+
+        function cancelar() {
+            window.location.href = "./inventario.html";
+        }
+    </script>
+
+    <!-- 🔥 FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            getDocs,
+            addDoc
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        import {
+            getStorage,
+            ref,
+            uploadBytes,
+            getDownloadURL
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj0V13o71naoJlqfDdah5Ob1I-cZskp8M",
+            authDomain: "uniformes-calpus.firebaseapp.com",
+            projectId: "uniformes-calpus",
+            storageBucket: "uniformes-calpus.firebasestorage.app",
+            messagingSenderId: "134191574166",
+            appId: "1:134191574166:web:130c593447ffc5bfca26b7",
+            measurementId: "G-7169TL6NG0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // 🔽 Cargar escuelas
+        async function cargarEscuelas() {
+            const select = document.getElementById("escuela");
+
+            const snapshot = await getDocs(collection(db, "escuelas"));
+
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                select.innerHTML += `<option value="${doc.id}">${data.nombre}</option>`;
+            });
+        }
+
+        // 🔽 Cargar categorías
+        async function cargarCategorias() {
+            const select = document.getElementById("categoria");
+
+            const snapshot = await getDocs(collection(db, "categorias"));
+
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                select.innerHTML += `<option value="${doc.id}">${data.nombreCategoria}</option>`;
+            });
+        }
+
+        // 🚀 Guardar producto
+        document.getElementById("btnGuardar").addEventListener("click", async () => {
+
+            const nombre = document.getElementById("nombre").value.trim();
+            const talla = document.getElementById("talla").value;
+            const escuela = document.getElementById("escuela").value;
+            const categoria = document.getElementById("categoria").value;
+            const stock = parseInt(document.getElementById("stock").value);
+            const precio = parseFloat(document.getElementById("precio").value);
+            const file = document.getElementById("imagen").files[0];
+
+            if (!nombre || isNaN(stock) || isNaN(precio)) {
+                alert("Completa los campos correctamente");
+                return;
+            }
+
+            try {
+                let imgUrl = "";
+
+                // 📸 subir imagen
+                if (file) {
+                    const storageRef = ref(storage, "productos/" + Date.now() + "_" + file.name);
+                    await uploadBytes(storageRef, file);
+                    imgUrl = await getDownloadURL(storageRef);
+                }
+
+                // 💾 guardar en Firestore
+                await addDoc(collection(db, "productos"), {
+                    nombre,
+                    talla,
+                    stock,
+                    precioUnitario: precio, // 🔥 nuevo
+                    idCategoria: categoria,
+                    escuelasAsociadas: [escuela],
+                    imgUrl,
+                    creadoPor: localStorage.getItem("user"),
+                    fechaCreacion: new Date()
+                });
+
+                alert("Producto agregado");
+                window.location.href = "./inventario.html";
+
+            } catch (error) {
+                console.error(error);
+                alert("Error al guardar");
+            }
+        });
+
+        // 🔥 inicializar
+        cargarEscuelas();
+        cargarCategorias();
+
+    </script>
 
 </body>
 

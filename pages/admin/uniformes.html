@@ -2,85 +2,138 @@
 <html>
 
 <head>
-    <title>Uniformes</title>
+    <title>Usuarios</title>
     <link rel="stylesheet" href="../../assets/css/index.css">
     <link rel="stylesheet" href="../../assets/css/administrador.css">
 </head>
 
 <body>
+
+    <div class="menu-toggle" id="menuToggle">
+        <img src="../../assets/icons/menu.png" alt="Menú">
+    </div>
+
+    <aside class="sidebar" id="sidebar">
+        <h2>Menú</h2>
+        <nav>
+            <a href="./index.html">Inicio</a>
+            <a href="./inventario.html">Inventario</a>
+            <a href="./escuelas.html">Escuelas</a>
+            <a href="./uniformes.html">Usuarios</a>
+            <a href="./reportes.html">Reportes</a>
+            <a href="" onclick="logout()">Cerrar sesión</a>
+        </nav>
+    </aside>
+
     <div class="layout">
-
-        <div class="menu-toggle" id="menuToggle">
-            <img src="../../assets/icons/menu.png" alt="Menú">
-        </div>
-        <aside class="sidebar" id="sidebar">
-            <h2>Menú</h2>
-            <nav>
-                <a href="./index.html">Inicio</a>
-                <a href="./inventario.html">Inventario</a>
-                <a href="./escuelas.html">Escuelas</a>
-                <a href="./uniformes.html">Uniformes</a>
-                <a href="./reportes.html">Reportes</a>
-            </nav>
-        </aside>
-
         <main class="main">
-            <h1 style="text-align: center;">Gestión de Uniformes</h1>
-            <br>
+            <h1 style="text-align: center;">Gestión de Usuarios</h1>
 
             <div class="card">
                 <a href="./agregarUniforme.html">
-                    <button class="btn-primary">+ Agregar Uniforme</button>
+                    <button class="btn-primary">+ Agregar Usuario</button>
                 </a>
-
             </div>
 
             <div class="card">
                 <table>
                     <thead>
                         <tr>
+                            <th>Usuario</th>
                             <th>Nombre</th>
-                            <th>Escuela</th>
-                            <th>Precio</th>
+                            <th>Rol</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>Uniforme CBTis</td>
-                            <td>CBTis 154</td>
-                            <td>$850</td>
-                            <td>
-                                <button class="btn-editar"
-                                    onclick="window.location.href='./editarUniforme.html'">
-                                    <img src="../../assets/icons/editar24.png" alt="Editar">
-                                </button>
-                                <button class="btn-eliminar">
-                                    <img src="../../assets/icons/eliminar_1.png" alt="Eliminar">
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Pans CBTis</td>
-                            <td>CBTis 154</td>
-                            <td>$850</td>
-                            <td>
-                                <button class="btn-editar"
-                                    onclick="window.location.href='./editarUniforme.html'">
-                                    <img src="../../assets/icons/editar24.png" alt="Editar">
-                                </button>
-                                <button class="btn-eliminar">
-                                    <img src="../../assets/icons/eliminar_1.png" alt="Eliminar">
-                                </button>
-                            </td>
-                        </tr>
-
-                    </tbody>
+                    <tbody id="tablaUniformes"></tbody>
                 </table>
             </div>
         </main>
     </div>
     <script src="../../assets/js/script.js"></script>
+    <script>
+        const logged = localStorage.getItem("logged");
+        const rol = localStorage.getItem("rol");
+
+        if (!logged || rol !== "1") {
+            window.location.href = "../../login.html";
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "../../login.html";
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            getDocs,
+            deleteDoc,
+            doc
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj0V13o71naoJlqfDdah5Ob1I-cZskp8M",
+            authDomain: "uniformes-calpus.firebaseapp.com",
+            projectId: "uniformes-calpus",
+            storageBucket: "uniformes-calpus.firebasestorage.app",
+            messagingSenderId: "134191574166",
+            appId: "1:134191574166:web:130c593447ffc5bfca26b7",
+            measurementId: "G-7169TL6NG0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 🔥 cargar usuarios
+        async function cargarUsuarios() {
+            const tabla = document.getElementById("tablaUniformes");
+            tabla.innerHTML = "";
+
+            const snap = await getDocs(collection(db, "usuarios"));
+
+            snap.forEach(docItem => {
+                const data = docItem.data();
+
+                const rolTexto = data.rolInfo?.idRol === "1"
+                    ? "Administrador"
+                    : "Vendedor";
+
+                tabla.innerHTML += `
+        <tr>
+            <td>${data.usuario}</td>
+            <td>${data.nombre || ""}</td>
+            <td>${rolTexto}</td>
+            <td>
+                <button class="btn-editar" onclick="editar('${docItem.id}')">
+                    <img src="../../assets/icons/editar24.png">
+                </button>
+                <button class="btn-eliminar" onclick="eliminar('${docItem.id}')">
+                    <img src="../../assets/icons/eliminar_1.png">
+                </button>
+            </td>
+        </tr>
+        `;
+            });
+        }
+
+        window.editar = (id) => {
+            window.location.href = `./editarUniforme.html?id=${id}`;
+        };
+
+        window.eliminar = async (id) => {
+            if (!confirm("¿Eliminar usuario?")) return;
+
+            await deleteDoc(doc(db, "usuarios", id));
+            cargarUsuarios();
+        };
+
+        cargarUsuarios();
+    </script>
+
 </body>
 
 </html>

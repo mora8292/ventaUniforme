@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uniformes</title>
     <link rel="stylesheet" href="../../assets/css/index.css">
     <link rel="stylesheet" href="../../assets/css/styless.css">
-    <title>Uniformes</title>
 </head>
 
 <body>
-    
+
+    <!-- 🔘 MENÚ -->
     <div class="menu-toggle" id="menuToggle">
-        <img src="../../assets/icons/menu.png" alt="Menú">
+        <img src="../../assets/icons/menu.png">
     </div>
 
     <aside class="sidebar" id="sidebar">
@@ -23,46 +24,102 @@
         </nav>
     </aside>
 
-    <div class="carrito-toggle">    
+    <!-- 🛒 -->
+    <div class="carrito-toggle">
         <a href="./carrito.html">
-            <img src="../../assets/icons/carrito.png" alt="Menú">
+            <img src="../../assets/icons/carrito.png">
         </a>
     </div>
 
-    <div id="contenedorBotones">
-
-        <a href="./ventas.html" class="botonProducto">
-            <img src="../../assets/img/uniforme1.jpg" class="uniforme">
-            <span class="tituloProducto">Uniforme</span>
-        </a>
-
-        <a href="./ventas.html" class="botonProducto">
-            <img src="../../assets/img/uniforme1.jpg" class="uniforme">
-            <span class="tituloProducto">Uniforme</span>
-        </a>
-
-        <a href="./ventas.html" class="botonProducto">
-            <img src="../../assets/img/uniforme1.jpg" class="uniforme">
-            <span class="tituloProducto">Uniforme</span>
-        </a>
-
-        <a href="./ventas.html"  class="botonProducto">
-            <img src="../../assets/img/uniforme1.jpg" class="uniforme">
-            <span class="tituloProducto">Uniforme</span>
-        </a>
-
-        <a href="./ventas.html" class="botonProducto">
-            <img src="../../assets/img/uniforme1.jpg" class="uniforme">
-            <span class="tituloProducto">Uniforme</span>
-        </a>
-
-        <a href="./ventas.html" class="botonProducto">
-            <img src="../../assets/img/uniforme1.jpg" class="uniforme">
-            <span class="tituloProducto">Uniforme</span>
-        </a>
-    </div>
+    <!-- 📦 PRODUCTOS -->
+    <div id="contenedorBotones"></div>
 
     <script src="../../assets/js/script.js"></script>
+    <script>
+        const logged = localStorage.getItem("logged");
+        const rol = localStorage.getItem("rol");
+
+        // ❌ no ha iniciado sesión
+        if (!logged) {
+            window.location.href = "../../login.html";
+        }
+        function logout() {
+            localStorage.clear();
+            window.location.href = "../../login.html";
+        }
+    </script>
+    <!-- 🔥 FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            getDocs
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj0V13o71naoJlqfDdah5Ob1I-cZskp8M",
+            authDomain: "uniformes-calpus.firebaseapp.com",
+            projectId: "uniformes-calpus",
+            storageBucket: "uniformes-calpus.firebasestorage.app",
+            messagingSenderId: "134191574166",
+            appId: "1:134191574166:web:130c593447ffc5bfca26b7",
+            measurementId: "G-7169TL6NG0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 🧠 obtener id de escuela
+        const params = new URLSearchParams(window.location.search);
+        const idEscuela = params.get("id");
+
+        // 🚨 validación
+        if (!idEscuela) {
+            alert("Escuela no seleccionada");
+            window.location.href = "./escuelas.html";
+        }
+
+        // 🚀 cargar productos
+        async function cargarProductos() {
+
+            const contenedor = document.getElementById("contenedorBotones");
+            contenedor.innerHTML = "<p>Cargando...</p>";
+
+            const snap = await getDocs(collection(db, "productos"));
+
+            contenedor.innerHTML = "";
+
+            let hayProductos = false;
+
+            snap.forEach(doc => {
+                const data = doc.data();
+
+                // 🔥 FILTRO POR ESCUELA
+                if (data.escuelasAsociadas?.includes(idEscuela)) {
+
+                    hayProductos = true;
+
+                    contenedor.innerHTML += `
+                <a href="./ventas.html?idProducto=${doc.id}" class="botonProducto">
+                    <img src="${data.imgUrl || '../../assets/img/uniforme1.jpg'}" class="uniforme">
+                    <span class="tituloProducto">${data.nombre}</span>
+                    <span>$${data.precioUnitario || 0}</span>
+                </a>
+            `;
+                }
+            });
+
+            // ❌ si no hay productos
+            if (!hayProductos) {
+                contenedor.innerHTML = "<p>No hay uniformes para esta escuela</p>";
+            }
+        }
+
+        // 🔥 iniciar
+        cargarProductos();
+    </script>
 
 </body>
+
 </html>

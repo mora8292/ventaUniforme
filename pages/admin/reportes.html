@@ -1,60 +1,205 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
+
 <head>
+    <meta charset="UTF-8">
     <title>Reportes</title>
     <link rel="stylesheet" href="../../assets/css/index.css">
     <link rel="stylesheet" href="../../assets/css/administrador.css">
 </head>
 
 <body>
+    <div class="menu-toggle" id="menuToggle">
+        <img src="../../assets/icons/menu.png" alt="Menú">
+    </div>
+
+    <aside class="sidebar" id="sidebar">
+        <h2>Menú</h2>
+        <nav>
+            <a href="./index.html">Inicio</a>
+            <a href="./inventario.html">Inventario</a>
+            <a href="./escuelas.html">Escuelas</a>
+            <a href="./uniformes.html">Usuarios</a>
+            <a href="./reportes.html">Reportes</a>
+            <a href="" onclick="logout()">Cerrar sesion</a>
+        </nav>
+    </aside>
     <div class="layout">
-        <div class="menu-toggle" id="menuToggle">
-            <img src="../../assets/icons/menu.png" alt="Menú">
-        </div>
-        
-        <aside class="sidebar" id="sidebar">
-            <h2>Menú</h2>
-            <nav>
-                <a href="./index.html">Inicio</a>
-                <a href="./inventario.html">Inventario</a>
-                <a href="./escuelas.html">Escuelas</a>
-                <a href="./uniformes.html">Uniformes</a>
-                <a href="./reportes.html">Reportes</a>
-            </nav>
-        </aside>
-        
+
+
         <main class="main">
-            <div class="topbar">
-                <h1 style="text-align: center;">Generar Reporte de Ventas</h1>
-            </div>
-            
+            <h1 style="text-align:center;">Reporte de Ventas</h1>
+            <br>
+
+            <!-- 🔍 FILTROS -->
             <div class="card">
                 <div class="filtros">
+
                     <div class="campo">
                         <label>Fecha Inicio</label>
-                        <input type="date">
+                        <input type="date" id="fechaInicio">
                     </div>
-                    
+
                     <div class="campo">
                         <label>Fecha Fin</label>
-                        <input type="date">
+                        <input type="date" id="fechaFin">
                     </div>
+
                     <div class="campo">
                         <label>Escuela</label>
-                        <select>
-                            <option>Todas</option>
-                            <option>CBTis 154</option>
-                            <option>Secundaria Matamoros</option>
+                        <select id="escuela">
+                            <option value="todas">Todas</option>
                         </select>
                     </div>
+
                 </div>
-                
+
                 <div class="contenedor-boton">
-                    <button class="btn-primary">Generar Reporte</button>
+                    <button class="btn-primary" id="btnReporte">Generar Reporte</button>
                 </div>
             </div>
+
+            <!-- 📊 TABLA -->
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Escuela</th>
+                            <th>Total Venta</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaReportes"></tbody>
+                </table>
+
+                <h3 id="totalGeneral">Total: $0</h3>
+            </div>
+
         </main>
     </div>
     <script src="../../assets/js/script.js"></script>
+
+    <!-- 🔒 LOGIN -->
+    <script>
+        const logged = localStorage.getItem("logged");
+        if (!logged) window.location.href = "../../login.html";
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "../../login.html";
+        }
+    </script>
+
+    <!-- 🔥 FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            getDocs,
+            query,
+            where
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj0V13o71naoJlqfDdah5Ob1I-cZskp8M",
+            authDomain: "uniformes-calpus.firebaseapp.com",
+            projectId: "uniformes-calpus",
+            storageBucket: "uniformes-calpus.firebasestorage.app",
+            messagingSenderId: "134191574166",
+            appId: "1:134191574166:web:130c593447ffc5bfca26b7",
+            measurementId: "G-7169TL6NG0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 🏫 cargar escuelas
+        async function cargarEscuelas() {
+            const select = document.getElementById("escuela");
+
+            const snap = await getDocs(collection(db, "escuelas"));
+
+            snap.forEach(doc => {
+                const data = doc.data();
+                select.innerHTML += `<option value="${doc.id}">${data.nombre}</option>`;
+            });
+        }
+
+        // 🚀 generar reporte
+        document.getElementById("btnReporte").addEventListener("click", async () => {
+
+            const tabla = document.getElementById("tablaReportes");
+            tabla.innerHTML = "";
+
+            const fechaInicio = document.getElementById("fechaInicio").value;
+            const fechaFin = document.getElementById("fechaFin").value;
+            const escuelaFiltro = document.getElementById("escuela").value;
+
+            let totalGeneral = 0;
+
+            let condiciones = [];
+
+            if (fechaInicio) {
+                condiciones.push(where("fechaVenta", ">=", new Date(fechaInicio)));
+            }
+
+            if (fechaFin) {
+                condiciones.push(where("fechaVenta", "<=", new Date(fechaFin)));
+            }
+
+            if (escuelaFiltro !== "todas") {
+                condiciones.push(where("escuelaId", "==", escuelaFiltro));
+            }
+
+            const consulta = condiciones.length > 0
+                ? query(collection(db, "ventas"), ...condiciones)
+                : collection(db, "ventas");
+
+            const snap = await getDocs(consulta);
+
+            // 🔥 mapa de escuelas
+            const escuelasSnap = await getDocs(collection(db, "escuelas"));
+            const escuelasMap = {};
+
+            escuelasSnap.forEach(doc => {
+                escuelasMap[doc.id] = doc.data().nombre;
+            });
+
+            // 🔄 recorrer ventas
+            snap.forEach(docItem => {
+                const data = docItem.data();
+
+                const fecha = data.fechaVenta?.toDate().toLocaleDateString() || "N/A";
+                const nombreEscuela = escuelasMap[data.escuelaId] || "Sin escuela";
+
+                let totalVenta = 0;
+
+                if (Array.isArray(data.items)) {
+                    data.items.forEach(item => {
+                        totalVenta += (item.cantidad || 0) * (item.precioUnitario || 0);
+                    });
+                }
+
+                totalGeneral += totalVenta;
+
+                tabla.innerHTML += `
+            <tr>
+                <td>${fecha}</td>
+                <td>${nombreEscuela}</td>
+                <td>$${totalVenta.toFixed(2)}</td>
+            </tr>
+        `;
+            });
+
+            document.getElementById("totalGeneral").innerText =
+                "Total: $" + totalGeneral.toFixed(2);
+        });
+
+        // 🔥 init
+        cargarEscuelas();
+    </script>
+
 </body>
+
 </html>
