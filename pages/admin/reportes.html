@@ -6,6 +6,160 @@
     <title>Reportes</title>
     <link rel="stylesheet" href="../../assets/css/index.css">
     <link rel="stylesheet" href="../../assets/css/administrador.css">
+
+    <style>
+        .reporte-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .reporte-header h1 {
+            margin-bottom: 8px;
+            color: #1f2937;
+        }
+
+        .reporte-header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .filtros-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .campo {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .campo label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .campo input,
+        .campo select {
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .campo input:focus,
+        .campo select:focus {
+            border-color: #2563eb;
+        }
+
+        .contenedor-boton {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            background: #2563eb;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: scale(1.02);
+        }
+
+        .resumen-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .mini-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .mini-card h3 {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .mini-card p {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .tabla-reportes {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: #2563eb;
+            color: white;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        tbody tr:hover {
+            background: #eef2ff;
+        }
+
+        #sinResultados {
+            text-align: center;
+            color: #6b7280;
+            padding: 20px;
+            display: none;
+        }
+
+        #totalGeneral {
+            text-align: right;
+            margin-top: 20px;
+            color: #111827;
+        }
+
+        .detalle-lista {
+            text-align: left;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .detalle-item {
+            background: #f3f4f6;
+            padding: 8px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+        }
+    </style>
 </head>
 
 <body>
@@ -21,19 +175,20 @@
             <a href="./escuelas.html">Escuelas</a>
             <a href="./uniformes.html">Usuarios</a>
             <a href="./reportes.html">Reportes</a>
-            <a href="" onclick="logout()">Cerrar sesion</a>
+            <a href="" onclick="logout()">Cerrar sesión</a>
         </nav>
     </aside>
+
     <div class="layout">
-
-
         <main class="main">
-            <h1 style="text-align:center;">Reporte de Ventas</h1>
-            <br>
 
-            <!-- 🔍 FILTROS -->
+            <div class="reporte-header">
+                <h1>Reporte de Ventas</h1>
+                <p>Consulta qué uniforme se vendió, cuántas prendas y qué tallas compraron</p>
+            </div>
+
             <div class="card">
-                <div class="filtros">
+                <div class="filtros-grid">
 
                     <div class="campo">
                         <label>Fecha Inicio</label>
@@ -59,27 +214,46 @@
                 </div>
             </div>
 
-            <!-- 📊 TABLA -->
-            <div class="card">
+            <div class="resumen-cards">
+                <div class="mini-card">
+                    <h3>Total Vendido</h3>
+                    <p id="totalGeneralCard">$0.00</p>
+                </div>
+
+                <div class="mini-card">
+                    <h3>Ventas Registradas</h3>
+                    <p id="ventasCount">0</p>
+                </div>
+
+                <div class="mini-card">
+                    <h3>Prendas Vendidas</h3>
+                    <p id="prendasCount">0</p>
+                </div>
+            </div>
+
+            <div class="card tabla-reportes">
                 <table>
                     <thead>
                         <tr>
                             <th>Fecha</th>
                             <th>Escuela</th>
+                            <th>Detalle de Prendas</th>
                             <th>Total Venta</th>
                         </tr>
                     </thead>
                     <tbody id="tablaReportes"></tbody>
                 </table>
 
-                <h3 id="totalGeneral">Total: $0</h3>
+                <div id="sinResultados">No se encontraron ventas en ese rango.</div>
+
+                <h3 id="totalGeneral">Total General: $0.00</h3>
             </div>
 
         </main>
     </div>
+
     <script src="../../assets/js/script.js"></script>
 
-    <!-- 🔒 LOGIN -->
     <script>
         const logged = localStorage.getItem("logged");
         if (!logged) window.location.href = "../../login.html";
@@ -90,15 +264,12 @@
         }
     </script>
 
-    <!-- 🔥 FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import {
             getFirestore,
             collection,
-            getDocs,
-            query,
-            where
+            getDocs
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -114,89 +285,104 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 🏫 cargar escuelas
         async function cargarEscuelas() {
             const select = document.getElementById("escuela");
-
             const snap = await getDocs(collection(db, "escuelas"));
 
             snap.forEach(doc => {
-                const data = doc.data();
-                select.innerHTML += `<option value="${doc.id}">${data.nombre}</option>`;
+                select.innerHTML += `<option value="${doc.id}">${doc.data().nombre}</option>`;
             });
         }
 
-        // 🚀 generar reporte
         document.getElementById("btnReporte").addEventListener("click", async () => {
-
             const tabla = document.getElementById("tablaReportes");
+            const sinResultados = document.getElementById("sinResultados");
+
             tabla.innerHTML = "";
+            sinResultados.style.display = "none";
 
             const fechaInicio = document.getElementById("fechaInicio").value;
             const fechaFin = document.getElementById("fechaFin").value;
             const escuelaFiltro = document.getElementById("escuela").value;
 
             let totalGeneral = 0;
+            let totalVentas = 0;
+            let totalPrendas = 0;
 
-            let condiciones = [];
-
-            if (fechaInicio) {
-                condiciones.push(where("fechaVenta", ">=", new Date(fechaInicio)));
-            }
-
-            if (fechaFin) {
-                condiciones.push(where("fechaVenta", "<=", new Date(fechaFin)));
-            }
-
-            if (escuelaFiltro !== "todas") {
-                condiciones.push(where("escuelaId", "==", escuelaFiltro));
-            }
-
-            const consulta = condiciones.length > 0
-                ? query(collection(db, "ventas"), ...condiciones)
-                : collection(db, "ventas");
-
-            const snap = await getDocs(consulta);
-
-            // 🔥 mapa de escuelas
+            const ventasSnap = await getDocs(collection(db, "ventas"));
             const escuelasSnap = await getDocs(collection(db, "escuelas"));
+            const productosSnap = await getDocs(collection(db, "productos"));
+
             const escuelasMap = {};
+            const productosMap = {};
 
             escuelasSnap.forEach(doc => {
                 escuelasMap[doc.id] = doc.data().nombre;
             });
 
-            // 🔄 recorrer ventas
-            snap.forEach(docItem => {
-                const data = docItem.data();
+            productosSnap.forEach(doc => {
+                productosMap[doc.id] = doc.data();
+            });
 
-                const fecha = data.fechaVenta?.toDate().toLocaleDateString() || "N/A";
-                const nombreEscuela = escuelasMap[data.escuelaId] || "Sin escuela";
+            const inicio = fechaInicio ? new Date(fechaInicio + "T00:00:00") : null;
+            const fin = fechaFin ? new Date(fechaFin + "T23:59:59") : null;
+
+            ventasSnap.forEach(docItem => {
+                const data = docItem.data();
+                if (!data.fechaVenta) return;
+
+                const fechaVenta = data.fechaVenta.toDate();
+
+                if (inicio && fechaVenta < inicio) return;
+                if (fin && fechaVenta > fin) return;
+                if (escuelaFiltro !== "todas" && data.escuelaId !== escuelaFiltro) return;
 
                 let totalVenta = 0;
+                let detalleHTML = "";
 
                 if (Array.isArray(data.items)) {
                     data.items.forEach(item => {
-                        totalVenta += (item.cantidad || 0) * (item.precioUnitario || 0);
+                        const producto = productosMap[item.idProducto] || {};
+                        const nombre = producto.nombre || "Producto eliminado";
+                        const talla = producto.talla || "N/A";
+                        const cantidad = item.cantidad || 0;
+                        const precio = item.precioUnitario || 0;
+
+                        totalVenta += cantidad * precio;
+                        totalPrendas += cantidad;
+
+                        detalleHTML += `
+                            <div class="detalle-item">
+                                <strong>${nombre}</strong><br>
+                                Talla: ${talla} | Cantidad: ${cantidad}
+                            </div>
+                        `;
                     });
                 }
 
                 totalGeneral += totalVenta;
+                totalVentas++;
 
                 tabla.innerHTML += `
-            <tr>
-                <td>${fecha}</td>
-                <td>${nombreEscuela}</td>
-                <td>$${totalVenta.toFixed(2)}</td>
-            </tr>
-        `;
+                    <tr>
+                        <td>${fechaVenta.toLocaleDateString()} ${fechaVenta.toLocaleTimeString()}</td>
+                        <td>${escuelasMap[data.escuelaId] || "Sin escuela"}</td>
+                        <td><div class="detalle-lista">${detalleHTML}</div></td>
+                        <td>$${totalVenta.toFixed(2)}</td>
+                    </tr>
+                `;
             });
 
-            document.getElementById("totalGeneral").innerText =
-                "Total: $" + totalGeneral.toFixed(2);
+            if (totalVentas === 0) {
+                sinResultados.style.display = "block";
+            }
+
+            document.getElementById("totalGeneral").innerText = "Total General: $" + totalGeneral.toFixed(2);
+            document.getElementById("totalGeneralCard").innerText = "$" + totalGeneral.toFixed(2);
+            document.getElementById("ventasCount").innerText = totalVentas;
+            document.getElementById("prendasCount").innerText = totalPrendas;
         });
 
-        // 🔥 init
         cargarEscuelas();
     </script>
 
