@@ -1,3 +1,6 @@
+<!-- ========================= -->
+<!-- ESCUELAS.HTML COMPLETO -->
+<!-- ========================= -->
 <!DOCTYPE html>
 <html>
 
@@ -5,6 +8,25 @@
     <title>Escuelas</title>
     <link rel="stylesheet" href="../../assets/css/index.css">
     <link rel="stylesheet" href="../../assets/css/administrador.css">
+
+    <style>
+        .buscador-box {
+            margin-bottom: 20px;
+        }
+
+        .buscador-box input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .buscador-box input:focus {
+            border-color: #2563eb;
+        }
+    </style>
 </head>
 
 <body>
@@ -29,10 +51,15 @@
         <main class="main">
             <h1 style="text-align: center;">Gestión de Escuelas</h1>
             <br>
+
             <div class="card">
                 <a href="./agregarEscuela.html">
                     <button class="btn-primary">+ Agregar Escuela</button>
                 </a>
+            </div>
+
+            <div class="card buscador-box">
+                <input type="text" id="buscadorEscuela" placeholder="Buscar escuela por nombre o nivel...">
             </div>
 
             <div class="card">
@@ -51,77 +78,108 @@
         </main>
 
     </div>
+
     <script src="../../assets/js/script.js"></script>
-</body>
-<script>
-    const logged = localStorage.getItem("logged");
-    const rol = localStorage.getItem("rol");
 
-    // ❌ no ha iniciado sesión
-    if (!logged) {
-        window.location.href = "../../login.html";
-    }
-    function logout() {
-        localStorage.clear();
-        window.location.href = "../../login.html";
-    }
-</script>
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <script>
+        const logged = localStorage.getItem("logged");
+        const rol = localStorage.getItem("rol");
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBj0V13o71naoJlqfDdah5Ob1I-cZskp8M",
-        authDomain: "uniformes-calpus.firebaseapp.com",
-        projectId: "uniformes-calpus",
-        storageBucket: "uniformes-calpus.firebasestorage.app",
-        messagingSenderId: "134191574166",
-        appId: "1:134191574166:web:130c593447ffc5bfca26b7",
-        measurementId: "G-7169TL6NG0"
-    };
+        if (!logged) {
+            window.location.href = "../../login.html";
+        }
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+        function logout() {
+            localStorage.clear();
+            window.location.href = "../../login.html";
+        }
+    </script>
 
-    // 🚀 cargar escuelas
-    async function cargarEscuelas() {
-        const tabla = document.getElementById("tablaEscuelas");
-        tabla.innerHTML = "";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const snapshot = await getDocs(collection(db, "escuelas"));
+        const firebaseConfig = {
+            apiKey: "AIzaSyBj0V13o71naoJlqfDdah5Ob1I-cZskp8M",
+            authDomain: "uniformes-calpus.firebaseapp.com",
+            projectId: "uniformes-calpus",
+            storageBucket: "uniformes-calpus.firebasestorage.app",
+            messagingSenderId: "134191574166",
+            appId: "1:134191574166:web:130c593447ffc5bfca26b7",
+            measurementId: "G-7169TL6NG0"
+        };
 
-        snapshot.forEach((docItem) => {
-            const data = docItem.data();
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-            const fila = `
-            <tr>
-                <td>${data.nombre || "Sin nombre"}</td>
-                <td>${data.grado || "N/A"}</td>
-                <td>
-                    <button class="btn-editar" onclick="editar('${docItem.id}')"><img src="../../assets/icons/editar24.png" alt="Editar"></button>
-                    <button class="btn-eliminar" onclick="eliminar('${docItem.id}')"><img src="../../assets/icons/eliminar_1.png" alt="Eliminar"></button>
-                </td>
-            </tr>
-        `;
+        let escuelasData = [];
 
-            tabla.innerHTML += fila;
+        function renderEscuelas(lista) {
+            const tabla = document.getElementById("tablaEscuelas");
+            tabla.innerHTML = "";
+
+            if (lista.length === 0) {
+                tabla.innerHTML = `
+                    <tr>
+                        <td colspan="3">No se encontraron escuelas</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            lista.forEach((item) => {
+                tabla.innerHTML += `
+                    <tr>
+                        <td>${item.nombre || "Sin nombre"}</td>
+                        <td>${item.grado || "N/A"}</td>
+                        <td>
+                            <button class="btn-editar" onclick="editar('${item.id}')"><img src="../../assets/icons/editar24.png" alt="Editar"></button>
+                            <button class="btn-eliminar" onclick="eliminar('${item.id}')"><img src="../../assets/icons/eliminar_1.png" alt="Eliminar"></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function cargarEscuelas() {
+            const snapshot = await getDocs(collection(db, "escuelas"));
+            escuelasData = [];
+
+            snapshot.forEach((docItem) => {
+                escuelasData.push({
+                    id: docItem.id,
+                    ...docItem.data()
+                });
+            });
+
+            renderEscuelas(escuelasData);
+        }
+
+        document.getElementById("buscadorEscuela").addEventListener("input", (e) => {
+            const texto = e.target.value.toLowerCase();
+
+            const filtradas = escuelasData.filter(item =>
+                (item.nombre || "").toLowerCase().includes(texto) ||
+                (item.grado || "").toLowerCase().includes(texto)
+            );
+
+            renderEscuelas(filtradas);
         });
-    }
 
-    // ✏️ editar
-    window.editar = function (id) {
-        window.location.href = `./editarEscuela.html?id=${id}`;
-    }
+        window.editar = function (id) {
+            window.location.href = `./editarEscuela.html?id=${id}`;
+        }
 
-    // 🗑️ eliminar
-    window.eliminar = async function (id) {
-        if (!confirm("¿Eliminar escuela?")) return;
+        window.eliminar = async function (id) {
+            if (!confirm("¿Eliminar escuela?")) return;
 
-        await deleteDoc(doc(db, "escuelas", id));
+            await deleteDoc(doc(db, "escuelas", id));
+            cargarEscuelas();
+        }
+
         cargarEscuelas();
-    }
+    </script>
 
-    cargarEscuelas();
-</script>
+</body>
 
 </html>

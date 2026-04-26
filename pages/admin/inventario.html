@@ -5,6 +5,62 @@
     <title>Inventario</title>
     <link rel="stylesheet" href="../../assets/css/index.css">
     <link rel="stylesheet" href="../../assets/css/administrador.css">
+
+    <style>
+        .buscador-container {
+            margin-bottom: 15px;
+        }
+
+        .buscador {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .buscador:focus {
+            border-color: #4a90e2;
+        }
+
+        .stock-bajo {
+            background: #fff3cd !important;
+            color: #856404;
+            font-weight: bold;
+        }
+
+        .stock-critico {
+            background: #f8d7da !important;
+            color: #721c24;
+            font-weight: bold;
+        }
+
+        .badge-stock {
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .badge-normal {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-bajo {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-critico {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
 </head>
 
 <body>
@@ -36,6 +92,12 @@
                 </a>
             </div>
 
+            <!-- 🔎 Buscador -->
+            <div class="card buscador-container">
+                <input type="text" id="buscadorInventario" class="buscador"
+                    placeholder="Buscar uniforme, talla o categoría...">
+            </div>
+
             <div class="card">
                 <table>
                     <thead>
@@ -54,6 +116,7 @@
 
         </main>
     </div>
+
     <script src="../../assets/js/script.js"></script>
 
     <!-- 🔒 PROTECCIÓN -->
@@ -89,11 +152,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        let inventarioGlobal = [];
+
         async function cargarInventario() {
             const tabla = document.getElementById("tablaInventario");
             tabla.innerHTML = "";
 
-            // 🔥 1. Cargar categorías
             const categoriasSnap = await getDocs(collection(db, "categorias"));
             const categoriasMap = {};
 
@@ -101,32 +165,91 @@
                 categoriasMap[doc.id] = doc.data().nombreCategoria;
             });
 
-            // 🔥 2. Cargar productos
             const productosSnap = await getDocs(collection(db, "productos"));
+
+            inventarioGlobal = [];
 
             productosSnap.forEach((docItem) => {
                 const data = docItem.data();
 
-                // 🔥 obtener nombre real de categoría
-                const nombreCategoria = categoriasMap[data.idCategoria] || "Sin categoría";
+                inventarioGlobal.push({
+                    id: docItem.id,
+                    nombre: data.nombre || "",
+                    talla: data.talla || "",
+                    categoria: categoriasMap[data.idCategoria] || "Sin categoría",
+                    precio: data.precioUnitario ?? 0,
+                    stock: data.stock ?? 0
+                });
+            });
+
+            renderInventario(inventarioGlobal);
+        }
+
+        function renderInventario(lista) {
+            const tabla = document.getElementById("tablaInventario");
+            tabla.innerHTML = "";
+
+            if (lista.length === 0) {
+                tabla.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align:center;">No se encontraron resultados</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            lista.forEach(item => {
+                let claseFila = "";
+                let badgeClass = "";
+                let textoStock = item.stock;
+
+                if (item.stock <= 2) {
+                    claseFila = "stock-critico";
+                    badgeClass = "badge-critico";
+                } else if (item.stock <= 5) {
+                    claseFila = "stock-bajo";
+                    badgeClass = "badge-bajo";
+                } else {
+                    badgeClass = "badge-normal";
+                }
 
                 const fila = `
-<tr>
-    <td>${data.nombre}</td>
-    <td>${data.talla}</td>
-    <td>${nombreCategoria}</td>
-    <td>$${data.precioUnitario ?? 0}</td>
-    <td>${data.stock}</td>
-    <td>
-        <button class="btn-editar" onclick="editar('${docItem.id}')"><img src="../../assets/icons/editar24.png" alt="Editar"></button>
-        <button class="btn-eliminar" onclick="eliminar('${docItem.id}')"><img src="../../assets/icons/eliminar_1.png" alt="Eliminar"></button>
-    </td>
-</tr>
-    `;
+                    <tr class="${claseFila}">
+                        <td>${item.nombre}</td>
+                        <td>${item.talla}</td>
+                        <td>${item.categoria}</td>
+                        <td>$${item.precio}</td>
+                        <td>
+                            <span class="badge-stock ${badgeClass}">
+                                ${textoStock}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn-editar" onclick="editar('${item.id}')">
+                                <img src="../../assets/icons/editar24.png" alt="Editar">
+                            </button>
+                            <button class="btn-eliminar" onclick="eliminar('${item.id}')">
+                                <img src="../../assets/icons/eliminar_1.png" alt="Eliminar">
+                            </button>
+                        </td>
+                    </tr>
+                `;
 
                 tabla.innerHTML += fila;
             });
         }
+
+        document.getElementById("buscadorInventario").addEventListener("input", (e) => {
+            const texto = e.target.value.toLowerCase();
+
+            const filtrados = inventarioGlobal.filter(item =>
+                item.nombre.toLowerCase().includes(texto) ||
+                item.talla.toLowerCase().includes(texto) ||
+                item.categoria.toLowerCase().includes(texto)
+            );
+
+            renderInventario(filtrados);
+        });
 
         window.editar = function (id) {
             window.location.href = `./editarInventario.html?id=${id}`;
