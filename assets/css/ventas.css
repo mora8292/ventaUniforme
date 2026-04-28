@@ -76,3 +76,43 @@
 .btn-comprar:hover {
     background-color: #1d4ed8;
 }
+
+/* CONTENEDOR DE CANTIDAD */
+.cantidad-container {
+    margin-bottom: 25px;
+}
+
+/* INPUT CANTIDAD */
+#cantidad {
+    width: 120px;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: 0.2s ease;
+    text-align: center;
+}
+
+/* EFECTO AL HACER CLICK */
+#cantidad:focus {
+    border-color: #1f2a40;
+    box-shadow: 0 0 5px rgba(31, 42, 64, 0.2);
+}
+
+/* HOVER */
+#cantidad:hover {
+    border-color: #1f2a40;
+}
+
+/* QUITAR FLECHAS EN CHROME */
+#cantidad::-webkit-outer-spin-button,
+#cantidad::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* QUITAR FLECHAS EN FIREFOX */
+#cantidad[type=number] {
+    -moz-appearance: textfield;
+}
