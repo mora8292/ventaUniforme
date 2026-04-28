@@ -20,7 +20,7 @@
         <nav>
             <a href="./index.html">Inicio</a>
             <a href="./escuelas.html">Escuelas</a>
-            <a href="#">Contacto</a>
+            <a href="#" onclick="logout()">Cerrar sesión</a>
         </nav>
     </aside>
 
@@ -51,6 +51,19 @@
     </div>
 
     <script src="../../assets/js/script.js"></script>
+        <script>
+        const logged = localStorage.getItem("logged");
+        const rol = localStorage.getItem("rol");
+
+        if (!logged) {
+            window.location.href = "../../login.html";
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "../../login.html";
+        }
+    </script>
 
     <script>
 

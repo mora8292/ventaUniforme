@@ -95,7 +95,7 @@
             <!-- 🔎 Buscador -->
             <div class="card buscador-container">
                 <input type="text" id="buscadorInventario" class="buscador"
-                    placeholder="Buscar uniforme, talla o categoría...">
+                    placeholder="Buscar uniforme, talla, escuela o categoría...">
             </div>
 
             <div class="card">
@@ -104,6 +104,7 @@
                         <tr>
                             <th>Uniforme</th>
                             <th>Talla</th>
+                            <th>Escuela</th>
                             <th>Categoría</th>
                             <th>Precio</th>
                             <th>Stock</th>
@@ -155,14 +156,18 @@
         let inventarioGlobal = [];
 
         async function cargarInventario() {
-            const tabla = document.getElementById("tablaInventario");
-            tabla.innerHTML = "";
-
             const categoriasSnap = await getDocs(collection(db, "categorias"));
             const categoriasMap = {};
 
             categoriasSnap.forEach(doc => {
                 categoriasMap[doc.id] = doc.data().nombreCategoria;
+            });
+
+            const escuelasSnap = await getDocs(collection(db, "escuelas"));
+            const escuelasMap = {};
+
+            escuelasSnap.forEach(doc => {
+                escuelasMap[doc.id] = doc.data().nombre;
             });
 
             const productosSnap = await getDocs(collection(db, "productos"));
@@ -172,10 +177,17 @@
             productosSnap.forEach((docItem) => {
                 const data = docItem.data();
 
+                let nombreEscuela = "Sin escuela";
+
+                if (Array.isArray(data.escuelasAsociadas) && data.escuelasAsociadas.length > 0) {
+                    nombreEscuela = escuelasMap[data.escuelasAsociadas[0]] || "Sin escuela";
+                }
+
                 inventarioGlobal.push({
                     id: docItem.id,
                     nombre: data.nombre || "",
                     talla: data.talla || "",
+                    escuela: nombreEscuela,
                     categoria: categoriasMap[data.idCategoria] || "Sin categoría",
                     precio: data.precioUnitario ?? 0,
                     stock: data.stock ?? 0
@@ -192,7 +204,7 @@
             if (lista.length === 0) {
                 tabla.innerHTML = `
                     <tr>
-                        <td colspan="6" style="text-align:center;">No se encontraron resultados</td>
+                        <td colspan="7" style="text-align:center;">No se encontraron resultados</td>
                     </tr>
                 `;
                 return;
@@ -201,7 +213,6 @@
             lista.forEach(item => {
                 let claseFila = "";
                 let badgeClass = "";
-                let textoStock = item.stock;
 
                 if (item.stock <= 2) {
                     claseFila = "stock-critico";
@@ -217,11 +228,12 @@
                     <tr class="${claseFila}">
                         <td>${item.nombre}</td>
                         <td>${item.talla}</td>
+                        <td>${item.escuela}</td>
                         <td>${item.categoria}</td>
                         <td>$${item.precio}</td>
                         <td>
                             <span class="badge-stock ${badgeClass}">
-                                ${textoStock}
+                                ${item.stock}
                             </span>
                         </td>
                         <td>
@@ -245,6 +257,7 @@
             const filtrados = inventarioGlobal.filter(item =>
                 item.nombre.toLowerCase().includes(texto) ||
                 item.talla.toLowerCase().includes(texto) ||
+                item.escuela.toLowerCase().includes(texto) ||
                 item.categoria.toLowerCase().includes(texto)
             );
 

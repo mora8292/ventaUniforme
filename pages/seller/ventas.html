@@ -6,6 +6,33 @@
     <title>Venta</title>
     <link rel="stylesheet" href="../../assets/css/index.css">
     <link rel="stylesheet" href="../../assets/css/ventas.css">
+
+    <style>
+        .stock-info {
+            margin-top: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .stock-ok {
+            color: #1b7f3b;
+        }
+
+        .stock-bajo {
+            color: #c97a00;
+        }
+
+        .stock-agotado {
+            color: #c62828;
+        }
+
+        .talla.activa {
+            background: #111;
+            color: white;
+            border: 1px solid #111;
+        }
+    </style>
 </head>
 
 <body>
@@ -42,12 +69,13 @@
 
             <h1 id="nombreProducto"></h1>
 
-            <p class="precio" id="precioProducto"></p>
+            <p class="precio" id="precioProducto">$0</p>
 
             <!-- TALLAS -->
             <div class="tallas">
                 <h3>Selecciona la talla:</h3>
                 <div class="opciones-talla" id="tallasContainer"></div>
+                <div id="stockInfo" class="stock-info">Selecciona una talla para ver stock</div>
             </div>
 
             <!-- CANTIDAD -->
@@ -60,7 +88,8 @@
 
             <!-- BOTONES -->
             <div>
-                <button id="btnVender" class="btn-comprar">Vender</button> <br><br>
+                <button id="btnVender" class="btn-comprar">Vender</button>
+                <br><br>
                 <button id="btnCarrito" class="btn-comprar">+ Agregar al carrito</button>
             </div>
 
@@ -68,6 +97,19 @@
     </div>
 
     <script src="../../assets/js/script.js"></script>
+        <script>
+        const logged = localStorage.getItem("logged");
+        const rol = localStorage.getItem("rol");
+
+        if (!logged) {
+            window.location.href = "../../login.html";
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "../../login.html";
+        }
+    </script>
 
     <script type="module">
 
@@ -97,9 +139,9 @@
         let tallas = [];
         let seleccion = null;
 
+
         // 🔥 cargar datos
         async function cargar() {
-
             const snap = await getDocs(collection(db, "productos"));
 
             snap.forEach(d => {
@@ -126,29 +168,55 @@
 
         // 🎨 pintar UI
         function pintar() {
-
             document.getElementById("nombreProducto").textContent = productoBase.nombre;
             document.getElementById("precioProducto").textContent = "$" + productoBase.precioUnitario;
             document.getElementById("imgProducto").src = productoBase.imgUrl;
 
             const cont = document.getElementById("tallasContainer");
-            cont.innerHTML = ""; // ⚠️ evita duplicados
+            cont.innerHTML = "";
 
             tallas.forEach(t => {
-
                 const btn = document.createElement("button");
                 btn.textContent = t.talla;
                 btn.classList.add("talla");
 
                 if (t.stock <= 0) btn.disabled = true;
 
-                btn.onclick = () => {
-                    seleccion = t;
-                    document.getElementById("cantidad").max = t.stock;
-                };
+                btn.onclick = () => seleccionarTalla(t, btn);
 
                 cont.appendChild(btn);
             });
+        }
+
+        // 🔥 seleccionar talla
+        function seleccionarTalla(t, btnSeleccionado) {
+            seleccion = t;
+
+            // quitar selección previa
+            document.querySelectorAll(".talla").forEach(btn => btn.classList.remove("activa"));
+            btnSeleccionado.classList.add("activa");
+
+            // actualizar precio según talla
+            document.getElementById("precioProducto").textContent = "$" + t.precio;
+
+            // actualizar stock
+            const stockInfo = document.getElementById("stockInfo");
+
+            if (t.stock <= 0) {
+                stockInfo.textContent = "Sin stock disponible";
+                stockInfo.className = "stock-info stock-agotado";
+            } else if (t.stock <= 5) {
+                stockInfo.textContent = `Stock bajo: ${t.stock} disponibles`;
+                stockInfo.className = "stock-info stock-bajo";
+            } else {
+                stockInfo.textContent = `Stock disponible: ${t.stock}`;
+                stockInfo.className = "stock-info stock-ok";
+            }
+
+            // actualizar cantidad máxima
+            const cantidadInput = document.getElementById("cantidad");
+            cantidadInput.max = t.stock;
+            cantidadInput.value = 1;
         }
 
         // 🛒 agregar al carrito
