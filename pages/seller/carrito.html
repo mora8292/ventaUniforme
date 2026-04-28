@@ -5,17 +5,52 @@
     <meta charset="UTF-8">
     <title>Carrito</title>
     <link rel="stylesheet" href="../../assets/css/index.css">
+    <link rel="stylesheet" href="../../assets/css/carrito.css">
 </head>
 
 <body>
 
-    <h1>Carrito</h1>
+    <!-- MENÚ -->
+    <div class="menu-toggle" id="menuToggle">
+        <img src="../../assets/icons/menu.png" alt="Menú">
+    </div>
 
-    <div id="listaProductos"></div>
+    <aside class="sidebar" id="sidebar">
+        <h2>Menú</h2>
+        <nav>
+            <a href="./index.html">Inicio</a>
+            <a href="./escuelas.html">Escuelas</a>
+            <a href="#">Contacto</a>
+        </nav>
+    </aside>
 
-    <h2 id="total"></h2>
+    <!-- ICONO CARRITO -->
+    <div class="carrito-toggle">    
+        <a href="./carrito.html">
+            <img src="../../assets/icons/carrito.png" alt="Carrito">
+        </a>
+    </div>
 
-    <button onclick="irATicket()">Finalizar Venta</button>
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="carrito-container">
+
+        <h1>Carrito de Venta</h1>
+
+        <!-- LISTA DINÁMICA -->
+        <div class="lista-productos" id="listaProductos"></div>
+
+        <!-- RESUMEN -->
+        <div class="resumen-carrito">
+            <h2 id="total"></h2>
+
+            <button class="btn-finalizar" onclick="irATicket()">
+                Finalizar Venta
+            </button>
+        </div>
+
+    </div>
+
+    <script src="../../assets/js/script.js"></script>
 
     <script>
 
@@ -35,15 +70,23 @@
                 total += p.precioUnitario * p.cantidad;
 
                 lista.innerHTML += `
-            <div>
-                <img src="${p.imgUrl}" width="80">
-                <h3>${p.nombre}</h3>
-                <p>Talla: ${p.talla}</p>
-                <p>Cantidad: ${p.cantidad}</p>
-                <p>$${p.precioUnitario}</p>
-                <button onclick="eliminar(${i})">Eliminar</button>
-            </div>
-        `;
+                <div class="producto-carrito">
+
+                    <img src="${p.imgUrl}" alt="${p.nombre}">
+
+                    <div class="info-producto">
+                        <h3>${p.nombre}</h3>
+                        <p>Talla: ${p.talla}</p>
+                        <p>Cantidad: ${p.cantidad}</p>
+                        <p class="precio">$${p.precioUnitario}</p>
+                    </div>
+
+                    <button class="btn-eliminar" onclick="eliminar(${i})">
+                        <img src="../../assets/icons/eliminar_1.png" alt="Eliminar">
+                    </button>
+
+                </div>
+                `;
             });
 
             totalHTML.textContent = "Total: $" + total;
@@ -55,7 +98,6 @@
             render();
         }
 
-        // 🚀 IR AL TICKET
         function irATicket() {
 
             if (carrito.length === 0) {
@@ -63,7 +105,6 @@
             }
 
             localStorage.setItem("ticket", JSON.stringify(carrito));
-
             window.location.href = "./ticket.html";
         }
 

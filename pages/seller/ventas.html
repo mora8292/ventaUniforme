@@ -10,6 +10,14 @@
 
 <body>
 
+    <!-- ICONO CARRITO -->
+    <div class="carrito-toggle">
+        <a href="./carrito.html">
+            <img src="../../assets/icons/carrito.png" alt="Carrito">
+        </a>
+    </div>
+
+    <!-- MENÚ -->
     <div class="menu-toggle" id="menuToggle">
         <img src="../../assets/icons/menu.png" alt="Menú">
     </div>
@@ -23,35 +31,43 @@
         </nav>
     </aside>
 
-    <div class="carrito-toggle">
-        <a href="./carrito.html">🛒</a>
-    </div>
-
+    <!-- CONTENIDO -->
     <div class="producto-container">
 
-        <div>
-            <img id="imgProducto" width="250">
+        <div class="producto-imagen">
+            <img id="imgProducto" alt="Producto">
         </div>
 
-        <div>
+        <div class="producto-info">
 
             <h1 id="nombreProducto"></h1>
-            <p id="precioProducto"></p>
 
-            <h3>Tallas</h3>
-            <div id="tallasContainer"></div>
+            <p class="precio" id="precioProducto"></p>
 
-            <h3>Cantidad</h3>
-            <input type="number" id="cantidad" value="1" min="1">
+            <!-- TALLAS -->
+            <div class="tallas">
+                <h3>Selecciona la talla:</h3>
+                <div class="opciones-talla" id="tallasContainer"></div>
+            </div>
 
-            <br><br>
+            <!-- CANTIDAD -->
+            <div class="tallas">
+                <h3>Cantidad</h3>
+                <input type="number" id="cantidad" value="1" min="1">
+            </div>
 
-            <button id="btnVender">Vender</button>
-            <button id="btnCarrito">Agregar al carrito</button>
+            <br>
+
+            <!-- BOTONES -->
+            <div>
+                <button id="btnVender" class="btn-comprar">Vender</button> <br><br>
+                <button id="btnCarrito" class="btn-comprar">+ Agregar al carrito</button>
+            </div>
 
         </div>
-
     </div>
+
+    <script src="../../assets/js/script.js"></script>
 
     <script type="module">
 
@@ -81,7 +97,7 @@
         let tallas = [];
         let seleccion = null;
 
-        // 🔥 cargar producto
+        // 🔥 cargar datos
         async function cargar() {
 
             const snap = await getDocs(collection(db, "productos"));
@@ -108,7 +124,7 @@
             pintar();
         }
 
-        // 🎨 pintar
+        // 🎨 pintar UI
         function pintar() {
 
             document.getElementById("nombreProducto").textContent = productoBase.nombre;
@@ -116,11 +132,13 @@
             document.getElementById("imgProducto").src = productoBase.imgUrl;
 
             const cont = document.getElementById("tallasContainer");
+            cont.innerHTML = ""; // ⚠️ evita duplicados
 
             tallas.forEach(t => {
 
                 const btn = document.createElement("button");
                 btn.textContent = t.talla;
+                btn.classList.add("talla");
 
                 if (t.stock <= 0) btn.disabled = true;
 
@@ -133,7 +151,7 @@
             });
         }
 
-        // 🛒 carrito
+        // 🛒 agregar al carrito
         document.getElementById("btnCarrito").addEventListener("click", () => {
 
             if (!seleccion) return alert("Selecciona talla");
@@ -160,7 +178,7 @@
             alert("Agregado al carrito");
         });
 
-        // 💰 venta directa → IR A TICKET
+        // 💰 vender directo
         document.getElementById("btnVender").addEventListener("click", () => {
 
             if (!seleccion) return alert("Selecciona talla");
@@ -171,7 +189,6 @@
                 return alert(`Stock insuficiente. Disponible: ${seleccion.stock}`);
             }
 
-            // 🔥 crear carrito temporal SOLO para ticket
             const carritoTemp = [{
                 idProducto: seleccion.id,
                 nombre: productoBase.nombre,
@@ -181,10 +198,8 @@
                 imgUrl: productoBase.imgUrl
             }];
 
-            // guardar como carrito normal
             localStorage.setItem("carrito", JSON.stringify(carritoTemp));
 
-            // 👉 ir a ticket
             window.location.href = "./ticket.html";
         });
 
