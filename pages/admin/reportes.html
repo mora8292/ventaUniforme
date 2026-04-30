@@ -340,6 +340,16 @@
                 let totalVenta = 0;
                 let detalleHTML = "";
 
+                let escuelaNombre = "Sin escuela";
+
+                if (data.escuelaId) {
+                    escuelaNombre = escuelasMap[data.escuelaId] || "Sin escuela";
+                } else if (Array.isArray(data.items) && data.items.length > 0) {
+                    const primerProducto = productosMap[data.items[0].idProducto];
+                    const escuelaFallback = primerProducto?.escuelasAsociadas?.[0];
+                    escuelaNombre = escuelasMap[escuelaFallback] || "Sin escuela";
+                }
+
                 if (Array.isArray(data.items)) {
                     data.items.forEach(item => {
                         const producto = productosMap[item.idProducto] || {};
@@ -366,7 +376,7 @@
                 tabla.innerHTML += `
                     <tr>
                         <td>${fechaVenta.toLocaleDateString()} ${fechaVenta.toLocaleTimeString()}</td>
-                        <td>${escuelasMap[data.escuelaId] || "Sin escuela"}</td>
+                        <td>${escuelaNombre  || 'Sin nombre'}</td>
                         <td><div class="detalle-lista">${detalleHTML}</div></td>
                         <td>$${totalVenta.toFixed(2)}</td>
                     </tr>
