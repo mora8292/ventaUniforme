@@ -11,6 +11,12 @@
             margin-bottom: 15px;
         }
 
+        .buscador-wrap {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         .buscador {
             width: 100%;
             padding: 12px;
@@ -18,6 +24,15 @@
             border-radius: 10px;
             font-size: 15px;
             outline: none;
+        }
+
+        .buscador-select {
+            max-width: 220px;
+            min-width: 220px;
+        }
+
+        .buscador-input {
+            flex: 1;
         }
 
         .buscador:focus {
@@ -94,8 +109,20 @@
 
             <!-- 🔎 Buscador -->
             <div class="card buscador-container">
-                <input type="text" id="buscadorInventario" class="buscador"
-                    placeholder="Buscar uniforme, talla, escuela o categoría...">
+                <div class="buscador-wrap">
+                    <select id="filtroBusqueda" class="buscador buscador-select">
+                        <option value="todo">Buscar en todo</option>
+                        <option value="nombre">Uniforme</option>
+                        <option value="talla">Talla</option>
+                        <option value="escuela">Escuela</option>
+                        <option value="categoria">Categoría</option>
+                        <option value="precio">Precio</option>
+                        <option value="stock">Stock</option>
+                    </select>
+
+                    <input type="text" id="buscadorInventario" class="buscador buscador-input"
+                        placeholder="Escribe para buscar...">
+                </div>
             </div>
 
             <div class="card">
@@ -251,18 +278,53 @@
             });
         }
 
-        document.getElementById("buscadorInventario").addEventListener("input", (e) => {
-            const texto = e.target.value.toLowerCase();
+        function aplicarFiltroBusqueda() {
+            const texto = document.getElementById("buscadorInventario").value.toLowerCase().trim();
+            const filtro = document.getElementById("filtroBusqueda").value;
 
-            const filtrados = inventarioGlobal.filter(item =>
-                item.nombre.toLowerCase().includes(texto) ||
-                item.talla.toLowerCase().includes(texto) ||
-                item.escuela.toLowerCase().includes(texto) ||
-                item.categoria.toLowerCase().includes(texto)
-            );
+            if (!texto) {
+                renderInventario(inventarioGlobal);
+                return;
+            }
+
+            const filtrados = inventarioGlobal.filter(item => {
+                switch (filtro) {
+                    case "nombre":
+                        return item.nombre.toLowerCase().includes(texto);
+
+                    case "talla":
+                        return item.talla.toLowerCase().includes(texto);
+
+                    case "escuela":
+                        return item.escuela.toLowerCase().includes(texto);
+
+                    case "categoria":
+                        return item.categoria.toLowerCase().includes(texto);
+
+                    case "precio":
+                        return String(item.precio).toLowerCase().includes(texto);
+
+                    case "stock":
+                        return String(item.stock).toLowerCase().includes(texto);
+
+                    case "todo":
+                    default:
+                        return (
+                            item.nombre.toLowerCase().includes(texto) ||
+                            item.talla.toLowerCase().includes(texto) ||
+                            item.escuela.toLowerCase().includes(texto) ||
+                            item.categoria.toLowerCase().includes(texto) ||
+                            String(item.precio).toLowerCase().includes(texto) ||
+                            String(item.stock).toLowerCase().includes(texto)
+                        );
+                }
+            });
 
             renderInventario(filtrados);
-        });
+        }
+
+        document.getElementById("buscadorInventario").addEventListener("input", aplicarFiltroBusqueda);
+        document.getElementById("filtroBusqueda").addEventListener("change", aplicarFiltroBusqueda);
 
         window.editar = function (id) {
             window.location.href = `./editarInventario.html?id=${id}`;
